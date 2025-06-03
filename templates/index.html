@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UltraVid - Download YouTube, TikTok, Instagram Reels</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎥</text></svg>">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5180588862932336" crossorigin="anonymous"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main {
+            flex-grow: 1;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #FF4B2B 0%, #FF416C 100%);
+        }
+        .card-hover {
+            transition: transform 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+        }
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+        .loading-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #FF416C;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        .modal-content {
+            position: relative;
+            background: white;
+            margin: 15% auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .close-button {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        .close-button:hover {
+            color: #333;
+        }
+        /* Ad container styles */
+        .ad-container {
+            min-height: 100px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        .ad-container.vertical {
+            width: 300px;
+            min-height: 600px;
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        /* Responsive ad adjustments */
+        @media (max-width: 1400px) {
+            .ad-container.vertical {
+                width: 250px;
+                min-height: 500px;
+            }
+        }
+        @media (max-width: 1200px) {
+            .ad-container.vertical {
+                display: none;
+            }
+        }
+        @media (max-width: 768px) {
+            .ad-container.vertical {
+                position: static;
+                width: 100%;
+                min-height: 250px;
+                transform: none;
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Loading Overlay -->
+    <div id="loading" class="loading">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p class="text-xl font-semibold">Downloading your video...</p>
+            <p class="text-sm mt-2">This may take a few moments</p>
+        </div>
+    </div>
+
+    <!-- Issue Report Modal -->
+    <div id="issueModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Report an Issue</h2>
+            <div id="issueMessage" class="hidden mb-4 p-4 rounded-lg"></div>
+            <form id="issueForm" class="space-y-4">
+                <div>
+                    <label for="issueType" class="block text-gray-700 font-medium mb-2">Issue Type</label>
+                    <select id="issueType" name="issueType" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <option value="">Select an issue type</option>
+                        <option value="download">Download Failed</option>
+                        <option value="quality">Video Quality Issue</option>
+                        <option value="audio">Audio Problem</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="issueUrl" class="block text-gray-700 font-medium mb-2">Video URL</label>
+                    <input type="url" id="issueUrl" name="issueUrl" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                           placeholder="https://www.youtube.com/watch?v=...">
+                </div>
+                <div>
+                    <label for="issueDescription" class="block text-gray-700 font-medium mb-2">Description</label>
+                    <textarea id="issueDescription" name="issueDescription" required
+                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                              rows="4"
+                              placeholder="Please describe the issue you're experiencing..."></textarea>
+                </div>
+                <button type="submit"
+                        class="w-full px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                    Submit Issue
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-film text-3xl"></i>
+                    <h1 class="text-3xl font-bold">UltraVid</h1>
+                </div>
+                <button onclick="openModal()" class="flex items-center space-x-2 px-4 py-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all">
+                    <i class="fas fa-bug"></i>
+                    <span>Report Issue</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Download Form -->
+        <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Download Ultra Quality Videos</h2>
+            <p class="text-gray-600 mb-6">Download videos from YouTube, TikTok, and Instagram Reels in the highest quality available.</p>
+            
+            <form id="downloadForm" class="space-y-4">
+                <div class="flex flex-col space-y-2">
+                    <label for="url" class="text-gray-700 font-medium">Video URL</label>
+                    <div class="flex">
+                        <input type="url" id="url" name="url" required
+                               class="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                               placeholder="https://www.youtube.com/watch?v=...">
+                        <button type="submit"
+                                class="px-6 py-2 bg-red-600 text-white rounded-r-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                            Download
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Features Section with Side Ads -->
+        <div class="flex flex-col md:flex-row gap-12 max-w-7xl mx-auto">
+            <!-- Left Side Ad -->
+            <div class="hidden md:block">
+                <div class="ad-container vertical" style="left: 20px;">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-5180588862932336"
+                         data-ad-slot="5880476042"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>
+                         (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+            </div>
+
+            <!-- Features Content -->
+            <div class="flex-1 px-4">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-lg shadow-lg p-6 card-hover">
+                        <div class="text-red-600 mb-4">
+                            <i class="fas fa-video text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">High Quality</h3>
+                        <p class="text-gray-600">Download videos in the highest quality available, up to 4K resolution.</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-lg p-6 card-hover">
+                        <div class="text-red-600 mb-4">
+                            <i class="fas fa-bolt text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Fast & Easy</h3>
+                        <p class="text-gray-600">Simple interface, just paste the URL and download your video instantly.</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-lg p-6 card-hover">
+                        <div class="text-red-600 mb-4">
+                            <i class="fas fa-shield-alt text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Safe & Secure</h3>
+                        <p class="text-gray-600">No registration required, no data collection, completely private.</p>
+                    </div>
+                </div>
+
+                <!-- Supported Platforms -->
+                <div class="mt-12">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center">Supported Platforms</h2>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="bg-white rounded-lg shadow-lg p-6 card-hover">
+                            <div class="text-red-600 mb-4">
+                                <i class="fab fa-youtube text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">YouTube</h3>
+                            <p class="text-gray-600">Download videos, shorts, and live streams</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-lg p-6 card-hover">
+                            <div class="text-red-600 mb-4">
+                                <i class="fab fa-tiktok text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">TikTok</h3>
+                            <p class="text-gray-600">Download TikTok videos without watermark</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-lg p-6 card-hover">
+                            <div class="text-red-600 mb-4">
+                                <i class="fab fa-instagram text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Instagram</h3>
+                            <p class="text-gray-600">Download Instagram Reels in high quality</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side Ad -->
+            <div class="hidden md:block">
+                <div class="ad-container vertical" style="right: 20px;">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-5180588862932336"
+                         data-ad-slot="1555277714"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>
+                         (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-12 w-full">
+        <div class="w-full px-4 py-8">
+            <div class="text-center">
+                <p class="text-gray-400">© 2025 UltraVid. All rights reserved.</p>
+                <p class="text-gray-500 text-sm mt-2">For educational purposes only. Please respect copyright laws.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('downloadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const url = document.getElementById('url').value;
+            const loading = document.getElementById('loading');
+            
+            try {
+                loading.style.display = 'block';
+                
+                const response = await fetch('/download', {
+                    method: 'POST',
+                    body: new FormData(this)
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Download failed');
+                }
+                
+                // Get the filename from the Content-Disposition header
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = 'video.mp4';
+                if (contentDisposition) {
+                    const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
+                    if (matches != null && matches[1]) {
+                        filename = matches[1].replace(/['"]/g, '');
+                    }
+                }
+                
+                // Create a blob from the response
+                const blob = await response.blob();
+                
+                // Create a download link
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(downloadUrl);
+                document.body.removeChild(a);
+                
+            } catch (error) {
+                alert(error.message);
+            } finally {
+                loading.style.display = 'none';
+            }
+        });
+
+        // Modal functions
+        function openModal() {
+            document.getElementById('issueModal').style.display = 'block';
+            // Reset form and message when opening modal
+            document.getElementById('issueForm').reset();
+            const messageDiv = document.getElementById('issueMessage');
+            messageDiv.classList.add('hidden');
+            messageDiv.textContent = '';
+        }
+
+        function closeModal() {
+            document.getElementById('issueModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('issueModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Issue form submission
+        document.getElementById('issueForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                type: document.getElementById('issueType').value,
+                url: document.getElementById('issueUrl').value,
+                description: document.getElementById('issueDescription').value
+            };
+            
+            const messageDiv = document.getElementById('issueMessage');
+            messageDiv.classList.remove('hidden');
+            
+            try {
+                const response = await fetch('/report-issue', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to submit issue');
+                }
+                
+                // Show success message
+                messageDiv.className = 'mb-4 p-4 rounded-lg bg-green-100 text-green-700';
+                messageDiv.textContent = 'Thank you for your report! We will look into this issue.';
+                
+                // Reset form
+                this.reset();
+                
+                // Close modal after 2 seconds
+                setTimeout(closeModal, 2000);
+                
+            } catch (error) {
+                // Show error message
+                messageDiv.className = 'mb-4 p-4 rounded-lg bg-red-100 text-red-700';
+                messageDiv.textContent = error.message || 'Failed to submit issue. Please try again later.';
+            }
+        });
+    </script>
+</body>
+</html> 
