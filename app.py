@@ -237,9 +237,7 @@ def get_platform_specific_options(url):
 def download_video():
     temp_dir = None
     try:
-        # Check for ffmpeg first
-        if not check_ffmpeg():
-            return jsonify({'error': 'ffmpeg is required but not installed. Please install ffmpeg manually.'}), 500
+        # The application now relies on system-installed ffmpeg
 
         url = request.form.get('url', '').strip()
         if not url:
