@@ -243,6 +243,11 @@ def download_video():
         if not url:
             return jsonify({'error': 'Please provide a URL'}), 400
 
+        # Check if the URL is a YouTube URL and return an error if it is
+        if 'youtube.com' in url.lower() or 'youtu.be' in url.lower():
+            logger.warning(f"Attempted YouTube download for URL: {url}")
+            return jsonify({'error': 'Downloading from YouTube is currently not supported due to platform restrictions.'}), 400
+
         logger.info(f"Attempting to download video from URL: {url}")
 
         # Create a temporary directory for downloads
