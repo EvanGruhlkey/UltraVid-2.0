@@ -104,22 +104,6 @@ def install_ffmpeg():
         logger.error(f"Failed to install ffmpeg: {str(e)}")
         return False
 
-def check_ffmpeg():
-    """Check if ffmpeg is installed and install it if not"""
-    try:
-        # First try to run ffmpeg from the current directory
-        ffmpeg_path = os.path.join(os.getcwd(), 'ffmpeg.exe')
-        if os.path.exists(ffmpeg_path):
-            subprocess.run([ffmpeg_path, '-version'], capture_output=True, check=True)
-            return True
-            
-        # Then try to run ffmpeg from PATH
-        subprocess.run(['ffmpeg', '-version'], capture_output=True, check=True)
-        return True
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        logger.warning("ffmpeg not found, attempting to install...")
-        return install_ffmpeg()
-
 def debug_formats(url):
     """Debug function to list available formats"""
     try:
@@ -129,6 +113,24 @@ def debug_formats(url):
     except Exception as e:
         logger.error(f"Error debugging formats: {e}")
         return None
+
+def check_ffmpeg():
+    """Check if ffmpeg is installed and install it if not"""
+    try:
+        # First try to run ffmpeg from the current directory
+        ffmpeg_path = os.path.join(os.getcwd(), 'ffmpeg.exe')
+        if os.path.exists(ffmpeg_path):
+            subprocess.run([ffmpeg_path, '-version'], capture_output=True, check=True)
+            return True
+
+        # Then try to run ffmpeg from PATH
+        subprocess.run(['ffmpeg', '-version'], capture_output=True, check=True)
+        return True
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        # On Linux, ffmpeg is installed system-wide, so this block should not be reached
+        # If it is reached, it means system ffmpeg is not found
+        logger.error("System ffmpeg not found in PATH!")
+        return False
 
 class MyLogger:
     def debug(self, msg):
@@ -201,11 +203,6 @@ def get_platform_specific_options(url):
                 'Accept-Language': 'en-US,en;q=0.5',
                 'Accept-Encoding': 'gzip, deflate',
                 'Referer': 'https://www.instagram.com/',
-                'Cookie': 'ig_did=1; ig_nrcb=1; ds_user_id=1; sessionid=1; csrftoken=1',
-                'X-IG-App-ID': '936619743392459',
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-Instagram-AJAX': '1',
-                'X-ASBD-ID': '198387',
             },
             'extractor_args': {
                 'instagram': {
@@ -247,6 +244,11 @@ def download_video():
         if 'youtube.com' in url.lower() or 'youtu.be' in url.lower():
             logger.warning(f"Attempted YouTube download for URL: {url}")
             return jsonify({'error': 'Downloading from YouTube is currently not supported due to platform restrictions.'}), 400
+
+        # Check if the URL is an Instagram URL and return an error indicating limited support
+        if 'instagram.com' in url.lower():
+            logger.warning(f"Attempted Instagram download for URL: {url}")
+            return jsonify({'error': 'Downloading from Instagram currently has limited support due to platform restrictions.'}), 400
 
         logger.info(f"Attempting to download video from URL: {url}")
 
