@@ -14,6 +14,7 @@ import io
 import json
 from datetime import datetime
 from urllib.parse import urlparse
+import time
 
 app = Flask(__name__)
 
@@ -51,7 +52,7 @@ def sanitize_filename(filename):
     
     # If filename is empty after cleaning, use a default name
     if not filename:
-        filename = 'youtube_video'
+        filename = 'tiktok_video'
     
     # Limit length to 100 characters
     filename = filename[:100]
@@ -64,10 +65,14 @@ def sanitize_filename(filename):
     return filename
 
 def update_ytdlp():
+    """Update yt-dlp to the latest version"""
     try:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", "yt-dlp"])
+        # Try to update to nightly build first (most up-to-date)
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", "yt-dlp[default]", "--force-reinstall"])
+        logger.info("Successfully updated yt-dlp")
         return True
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Failed to update yt-dlp: {e}")
         return False
 
 def install_ffmpeg():
@@ -104,16 +109,6 @@ def install_ffmpeg():
         logger.error(f"Failed to install ffmpeg: {str(e)}")
         return False
 
-def debug_formats(url):
-    """Debug function to list available formats"""
-    try:
-        with yt_dlp.YoutubeDL({'listformats': True, 'quiet': False}) as ydl:
-            info = ydl.extract_info(url, download=False)
-            return info
-    except Exception as e:
-        logger.error(f"Error debugging formats: {e}")
-        return None
-
 def check_ffmpeg():
     """Check if ffmpeg is installed and install it if not"""
     try:
@@ -127,8 +122,6 @@ def check_ffmpeg():
         subprocess.run(['ffmpeg', '-version'], capture_output=True, check=True)
         return True
     except (subprocess.CalledProcessError, FileNotFoundError):
-        # On Linux, ffmpeg is installed system-wide, so this block should not be reached
-        # If it is reached, it means system ffmpeg is not found
         logger.error("System ffmpeg not found in PATH!")
         return False
 
@@ -144,21 +137,20 @@ class MyLogger:
 def index():
     return render_template('index.html')
 
-def get_platform_specific_options(url):
-    """Get platform-specific yt-dlp options"""
+def get_tiktok_options(url):
+    """Get TikTok-specific yt-dlp options with improved headers and settings"""
     options = {
-        'format': 'bestvideo[height<=2160]+bestaudio/best[height<=2160]/best',  # Default format for highest quality
-        'referer': 'https://www.youtube.com/',  # Default referer
+        'format': 'best[height<=2160]/best',
         'extract_flat': False,
         'quiet': False,
         'no_warnings': False,
         'nocheckcertificate': True,
         'ignoreerrors': False,
         'no_color': True,
-        'extractor_retries': 3,
-        'socket_timeout': 30,
-        'retries': 5,
-        'fragment_retries': 5,
+        'extractor_retries': 5,
+        'socket_timeout': 60,
+        'retries': 10,
+        'fragment_retries': 10,
         'skip_unavailable_fragments': True,
         'keepvideo': False,
         'writethumbnail': False,
@@ -166,6 +158,39 @@ def get_platform_specific_options(url):
         'writeautomaticsub': False,
         'noplaylist': True,
         'merge_output_format': 'mp4',
+        'logger': MyLogger(),
+        
+        # Enhanced headers to mimic a real browser
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'DNT': '1',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'sec-ch-ua': '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+        },
+        
+        # TikTok-specific extractor arguments
+        'extractor_args': {
+            'tiktok': {
+                'webpage_download_timeout': 60,
+                'api_hostname': 'api.tiktokv.com',
+            }
+        },
+        
+        # Add some delay between requests to avoid rate limiting
+        'sleep_interval': 2,
+        'max_sleep_interval': 5,
+        
+        # Postprocessors for better format handling
         'postprocessors': [
             {
                 'key': 'FFmpegVideoConvertor',
@@ -175,101 +200,63 @@ def get_platform_specific_options(url):
                 'key': 'FFmpegMetadata',
             }
         ],
-        'logger': MyLogger(),
-        'http_headers': {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5',
-            'Accept-Encoding': 'gzip, deflate',
-        }
     }
-
-    # Platform-specific configurations
-    if 'youtube.com' in url or 'youtu.be' in url:
-        options.update({
-            'format': 'bestvideo[height<=2160][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=2160]+bestaudio/best[height<=2160]/best',
-            'referer': 'https://www.youtube.com/',
-        })
-    elif 'instagram.com' in url:
-        options.update({
-            'format': 'bestvideo[height<=2160]+bestaudio/best[height<=2160]/best',
-            'referer': 'https://www.instagram.com/',
-            'extract_flat': False,
-            'noplaylist': True,
-            'extract_flat_playlist': False,
-            'http_headers': {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                'Accept-Language': 'en-US,en;q=0.5',
-                'Accept-Encoding': 'gzip, deflate',
-                'Referer': 'https://www.instagram.com/',
-            },
-            'extractor_args': {
-                'instagram': {
-                    'login': None,
-                    'password': None,
-                    'client_id': '936619743392459',
-                    'client_secret': '1c2d3e4f5g6h7i8j9k0l',
-                    'extract_flat': False,
-                    'extract_flat_playlist': False,
-                }
-            }
-        })
-    elif 'twitter.com' in url or 'x.com' in url:
-        options.update({
-            'format': 'bestvideo[height<=2160]+bestaudio/best[height<=2160]/best',
-            'referer': 'https://twitter.com/',
-            'http_headers': {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                'Accept-Language': 'en-US,en;q=0.5',
-                'Accept-Encoding': 'gzip, deflate',
-                'Referer': 'https://twitter.com/',
-            }
-        })
-
+    
     return options
 
 @app.route('/download', methods=['POST'])
 def download_video():
     temp_dir = None
     try:
-        # The application now relies on system-installed ffmpeg
-
         url = request.form.get('url', '').strip()
         if not url:
             return jsonify({'error': 'Please provide a URL'}), 400
 
-        # Check if the URL is a YouTube URL and return an error if it is
-        if 'youtube.com' in url.lower() or 'youtu.be' in url.lower():
-            logger.warning(f"Attempted YouTube download for URL: {url}")
-            return jsonify({'error': 'Downloading from YouTube is currently not supported due to platform restrictions.'}), 400
+        # Check if it's a TikTok URL
+        if not ('tiktok.com' in url.lower() or 'tiktokv.com' in url.lower()):
+            return jsonify({'error': 'This endpoint is specifically for TikTok videos. Please provide a valid TikTok URL.'}), 400
 
-        # Check if the URL is an Instagram URL and return an error indicating limited support
-        if 'instagram.com' in url.lower():
-            logger.warning(f"Attempted Instagram download for URL: {url}")
-            return jsonify({'error': 'Downloading from Instagram currently has limited support due to platform restrictions.'}), 400
+        logger.info(f"Attempting to download TikTok video from URL: {url}")
 
-        logger.info(f"Attempting to download video from URL: {url}")
+        # Update yt-dlp before attempting download
+        logger.info("Updating yt-dlp to latest version...")
+        update_ytdlp()
 
         # Create a temporary directory for downloads
         temp_dir = tempfile.mkdtemp()
         logger.debug(f"Created temp directory: {temp_dir}")
         
-        # Get platform-specific options
-        ydl_opts = get_platform_specific_options(url)
+        # Get TikTok-specific options
+        ydl_opts = get_tiktok_options(url)
         ydl_opts['outtmpl'] = os.path.join(temp_dir, '%(id)s.%(ext)s')
+        
+        # Add some delay before making requests
+        time.sleep(2)
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             try:
-                # Get video info first
+                # Get video info first with retry logic
                 logger.info("Extracting video information...")
-                info = ydl.extract_info(url, download=False)
+                max_retries = 3
+                info = None
+                
+                for attempt in range(max_retries):
+                    try:
+                        info = ydl.extract_info(url, download=False)
+                        break
+                    except yt_dlp.utils.DownloadError as e:
+                        error_msg = str(e).lower()
+                        if "unable to extract" in error_msg and "json" in error_msg:
+                            logger.warning(f"Attempt {attempt + 1} failed: JSON extraction error. Retrying...")
+                            if attempt < max_retries - 1:
+                                time.sleep(5 * (attempt + 1))  # Exponential backoff
+                                continue
+                        raise e
                 
                 # Validate info object
                 if not info:
                     logger.error("No video information extracted")
-                    return jsonify({'error': 'Could not extract video information. The URL might be invalid or the video might be private.'}), 400
+                    return jsonify({'error': 'Could not extract video information. The TikTok video might be private, deleted, or region-locked.'}), 400
                 
                 if not isinstance(info, dict):
                     logger.error(f"Info object is not a dictionary, got: {type(info)}")
@@ -277,31 +264,44 @@ def download_video():
 
                 # Debug available formats
                 if 'formats' in info:
-                    # Log available formats
                     formats = info['formats']
                     logger.info(f"Available formats: {len(formats)}")
-                    for fmt in formats[:5]:  # Log first 5 formats
+                    for fmt in formats[:3]:  # Log first 3 formats
                         logger.info(f"Format: {fmt.get('format_id')} - {fmt.get('ext')} - {fmt.get('resolution')} - {fmt.get('vcodec')} - {fmt.get('acodec')}")
 
                 # Extract basic video information safely
                 video_id = info.get('id', str(uuid.uuid4())[:8])
                 
-                # Try to get the caption/description first, fall back to title if not available
-                raw_caption = info.get('description', '') or info.get('caption', '') or info.get('title', f'video_{video_id}')
+                # Try to get the description/title for filename
+                raw_title = info.get('title', '') or info.get('description', '') or f'tiktok_{video_id}'
+                video_title = sanitize_filename(raw_title)
+                if not video_title:
+                    video_title = f'tiktok_{video_id}'
                 
-                # Clean up the caption more aggressively
-                video_caption = sanitize_filename(raw_caption)
-                if not video_caption:
-                    video_caption = f'video_{video_id}'
-                
-                logger.info(f"Raw caption: {raw_caption}")
-                logger.info(f"Cleaned caption: {video_caption}")
+                logger.info(f"Raw title: {raw_title}")
+                logger.info(f"Cleaned title: {video_title}")
                 logger.info(f"Video ID: {video_id}")
                 
-                # Download the video
+                # Download the video with retry logic
                 logger.info("Starting video download...")
-                with yt_dlp.YoutubeDL(ydl_opts) as download_ydl:
-                    download_info = download_ydl.extract_info(url, download=True)
+                download_success = False
+                
+                for attempt in range(max_retries):
+                    try:
+                        with yt_dlp.YoutubeDL(ydl_opts) as download_ydl:
+                            download_info = download_ydl.extract_info(url, download=True)
+                        download_success = True
+                        break
+                    except yt_dlp.utils.DownloadError as e:
+                        error_msg = str(e).lower()
+                        if "unable to extract" in error_msg and attempt < max_retries - 1:
+                            logger.warning(f"Download attempt {attempt + 1} failed. Retrying...")
+                            time.sleep(10 * (attempt + 1))
+                            continue
+                        raise e
+                
+                if not download_success:
+                    return jsonify({'error': 'Failed to download video after multiple attempts'}), 500
                 
                 if not download_info or not isinstance(download_info, dict):
                     logger.error(f"Invalid download info: {type(download_info)}")
@@ -309,50 +309,37 @@ def download_video():
 
                 # Find the downloaded file
                 downloaded_files = [f for f in os.listdir(temp_dir) 
-                                  if os.path.isfile(os.path.join(temp_dir, f)) and (f.endswith('.mp4') or f.endswith('.m4v') or f.endswith('.mov'))]
+                                  if os.path.isfile(os.path.join(temp_dir, f)) and 
+                                  (f.endswith('.mp4') or f.endswith('.m4v') or f.endswith('.mov') or f.endswith('.webm'))]
                 
                 if not downloaded_files:
                     logger.error(f"No downloaded files found in {temp_dir}")
                     all_files = os.listdir(temp_dir)
                     logger.error(f"All files in temp dir: {all_files}")
-                    
-                    # For Instagram, try to find any video file
-                    if 'instagram.com' in url:
-                        all_files = [f for f in os.listdir(temp_dir) if os.path.isfile(os.path.join(temp_dir, f))]
-                        logger.info(f"All files in temp dir for Instagram: {all_files}")
-                        if all_files:
-                            downloaded_file_path = os.path.join(temp_dir, all_files[0])
-                            logger.info(f"Using first available file: {all_files[0]}")
-                        else:
-                            return jsonify({'error': 'Video downloaded but file not found. The post might be private or not contain a video.'}), 500
-                    else:
-                        return jsonify({'error': 'Video downloaded but file not found'}), 500
-                else:
-                    # Get the downloaded file
-                    downloaded_file_path = os.path.join(temp_dir, downloaded_files[0])
-                    logger.info(f"Using file: {downloaded_files[0]}")
+                    return jsonify({'error': 'Video downloaded but file not found. The video might be private or unavailable.'}), 500
                 
-                # Verify the file has audio streams
-                try:
-                    ffprobe_cmd = ['ffprobe', '-v', 'quiet', '-show_streams', '-select_streams', 'a', downloaded_file_path]
-                    result = subprocess.run(ffprobe_cmd, capture_output=True, text=True)
-                    if result.returncode == 0 and result.stdout.strip():
-                        logger.info("Audio stream detected in downloaded file")
-                    else:
-                        logger.warning("No audio stream detected in downloaded file")
-                except Exception as e:
-                    logger.warning(f"Could not verify audio stream: {e}")
+                # Get the downloaded file
+                downloaded_file_path = os.path.join(temp_dir, downloaded_files[0])
+                logger.info(f"Using file: {downloaded_files[0]}")
+                
+                # Verify file size
+                file_size = os.path.getsize(downloaded_file_path)
+                if file_size < 1024:  # Less than 1KB
+                    logger.error(f"Downloaded file is too small: {file_size} bytes")
+                    return jsonify({'error': 'Downloaded file appears to be corrupted or empty'}), 500
+                
+                logger.info(f"Downloaded file size: {file_size} bytes")
                 
                 # Create a response with the file
                 response = send_file(
                     downloaded_file_path,
                     as_attachment=True,
-                    download_name=f"{video_caption}.mp4",
+                    download_name=f"{video_title}.mp4",
                     mimetype='video/mp4'
                 )
                 
                 # Set the Content-Disposition header directly
-                safe_filename = f"{video_caption}.mp4".replace('"', '\\"')  # Escape quotes
+                safe_filename = f"{video_title}.mp4".replace('"', '\\"')  # Escape quotes
                 response.headers['Content-Disposition'] = f'attachment; filename="{safe_filename}"; filename*=UTF-8\'\'{safe_filename}'
                 
                 # Add cleanup callback to the response
@@ -371,17 +358,19 @@ def download_video():
                 error_msg = str(e)
                 logger.error(f"yt-dlp Download error: {error_msg}")
                 
-                # Check for specific errors
-                if "Unable to download API page" in error_msg:
-                    return jsonify({'error': 'API access failed. The video might be region-blocked or private.'}), 400
+                # Check for specific TikTok errors
+                if "Unable to extract" in error_msg and "json" in error_msg.lower():
+                    return jsonify({'error': 'TikTok blocked the request. This may be due to rate limiting or anti-bot measures. Please try again later or check if the video is publicly accessible.'}), 429
+                elif "Private video" in error_msg or "private" in error_msg.lower():
+                    return jsonify({'error': 'This TikTok video is private and cannot be downloaded.'}), 400
+                elif "Video unavailable" in error_msg or "unavailable" in error_msg.lower():
+                    return jsonify({'error': 'This TikTok video is unavailable or has been removed.'}), 400
                 elif "getaddrinfo failed" in error_msg:
                     return jsonify({'error': 'Network connection error. Please check your internet connection.'}), 500
-                elif "Private video" in error_msg:
-                    return jsonify({'error': 'This video is private and cannot be downloaded.'}), 400
-                elif "Video unavailable" in error_msg:
-                    return jsonify({'error': 'This video is unavailable or has been removed.'}), 400
+                elif "timeout" in error_msg.lower():
+                    return jsonify({'error': 'Request timed out. TikTok servers may be slow or blocking requests.'}), 408
                 else:
-                    return jsonify({'error': f'Download failed: {error_msg}'}), 500
+                    return jsonify({'error': f'TikTok download failed: {error_msg}'}), 500
                     
             except Exception as e:
                 logger.error(f"Unexpected error during download: {str(e)}")
@@ -390,11 +379,19 @@ def download_video():
     except Exception as e:
         logger.error(f"Top-level error: {str(e)}")
         return jsonify({'error': f'Server error: {str(e)}'}), 500
+    finally:
+        # Cleanup temp directory if it still exists
+        if temp_dir and os.path.exists(temp_dir):
+            try:
+                shutil.rmtree(temp_dir)
+                logger.info(f"Cleaned up temporary directory: {temp_dir}")
+            except Exception as e:
+                logger.warning(f"Failed to clean up temp directory: {e}")
 
 @app.route('/health')
 def health_check():
     """Simple health check endpoint"""
-    return jsonify({'status': 'ok', 'message': 'Video downloader is running'})
+    return jsonify({'status': 'ok', 'message': 'TikTok downloader is running'})
 
 @app.route('/debug-formats', methods=['POST'])
 def debug_video_formats():
@@ -404,7 +401,15 @@ def debug_video_formats():
         if not url:
             return jsonify({'error': 'Please provide a URL'}), 400
         
-        info = debug_formats(url)
+        # Update yt-dlp first
+        update_ytdlp()
+        
+        opts = get_tiktok_options(url)
+        opts['listformats'] = True
+        
+        with yt_dlp.YoutubeDL(opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+            
         if info and 'formats' in info:
             formats = []
             for fmt in info['formats']:
@@ -417,12 +422,24 @@ def debug_video_formats():
                     'filesize': fmt.get('filesize'),
                     'tbr': fmt.get('tbr')
                 })
-            return jsonify({'formats': formats})
+            return jsonify({'formats': formats, 'title': info.get('title', 'Unknown')})
         else:
             return jsonify({'error': 'Could not extract format information'}), 400
             
     except Exception as e:
         return jsonify({'error': f'Debug error: {str(e)}'}), 500
+
+@app.route('/update-ytdlp', methods=['POST'])
+def update_ytdlp_endpoint():
+    """Endpoint to manually update yt-dlp"""
+    try:
+        success = update_ytdlp()
+        if success:
+            return jsonify({'message': 'yt-dlp updated successfully'})
+        else:
+            return jsonify({'error': 'Failed to update yt-dlp'}), 500
+    except Exception as e:
+        return jsonify({'error': f'Update error: {str(e)}'}), 500
 
 @app.route('/report-issue', methods=['POST'])
 def report_issue():
@@ -460,4 +477,4 @@ def report_issue():
 if __name__ == '__main__':
     # Determine debug mode based on environment variable
     debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() in ['1', 'true']
-    app.run(debug=debug_mode)
+    app.run(debug=debug_mode, port=5000, host='0.0.0.0')
