@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequently Asked Questions - UltraVid Video Downloader</title>
+    <meta name="description" content="Find answers to common questions about UltraVid video downloader. Learn how to download videos from TikTok, YouTube, and Instagram safely and legally.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎥</text></svg>">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5180588862932336" crossorigin="anonymous"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #FF4B2B 0%, #FF416C 100%);
+        }
+        .faq-item {
+            transition: all 0.3s ease;
+        }
+        .faq-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .faq-answer.active {
+            max-height: 200px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-film text-3xl"></i>
+                    <h1 class="text-3xl font-bold">UltraVid</h1>
+                </div>
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="/" class="hover:text-gray-200 transition-colors">Home</a>
+                    <a href="/about" class="hover:text-gray-200 transition-colors">About</a>
+                    <a href="/how-to-use" class="hover:text-gray-200 transition-colors">How to Use</a>
+                    <a href="/faq" class="text-gray-200 font-semibold">FAQ</a>
+                    <a href="/supported-platforms" class="hover:text-gray-200 transition-colors">Platforms</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Frequently Asked Questions</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Everything you need to know about UltraVid video downloader</p>
+        </div>
+
+        <!-- Search FAQ -->
+        <div class="max-w-2xl mx-auto mb-12">
+            <div class="relative">
+                <input type="text" id="faq-search" placeholder="Search FAQs..." 
+                       class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                <i class="fas fa-search absolute left-4 top-4 text-gray-400"></i>
+            </div>
+        </div>
+
+        <!-- FAQ Categories -->
+        <div class="grid md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                <i class="fas fa-download text-red-600 text-3xl mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-800">Download Process</h3>
+                <p class="text-gray-600 text-sm">Questions about downloading videos</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                <i class="fas fa-shield-alt text-red-600 text-3xl mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-800">Safety & Privacy</h3>
+                <p class="text-gray-600 text-sm">Security and privacy concerns</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                <i class="fas fa-tools text-red-600 text-3xl mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-800">Technical Issues</h3>
+                <p class="text-gray-600 text-sm">Troubleshooting and technical help</p>
+            </div>
+        </div>
+
+        <!-- Ad Space -->
+        <div class="text-center mb-12">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-5180588862932336"
+                 data-ad-slot="7634212686"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+
+        <!-- FAQ Items -->
+        <div class="max-w-4xl mx-auto space-y-6">
+            <!-- General Questions -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">General Questions</h2>
+                
+                <div class="faq-item bg-gray-50 rounded-lg p-4 mb-4 cursor-pointer" onclick="toggleFAQ(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-800">What is UltraVid?</h3>
+                        <i class="fas fa-chevron-down text-gray-500"></i>
+                    </div>
+                    <div class="faq-answer mt-3 text-gray-600">
+                        <p>UltraVid is a free online video downloader that allows you to download videos from popular social media platforms like TikTok, YouTube, and Instagram. Our service is completely free, requires no registration, and prioritizes your privacy and security.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item bg-gray-50 rounded-lg p-4 mb-4 cursor-pointer" onclick="toggleFAQ(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-800">Is UltraVid really free?</h3>
+                        <i class="fas fa-chevron-down text-gray-500"></i>
+                    </div>
+                    <div class="faq-answer mt-3 text-gray-600">
+                        <p>Yes, UltraVid is completely free to use. There are no hidden fees, premium subscriptions, or payment requirements. We believe in providing accessible video downloading services to everyone.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item bg-gray-50 rounded-lg p-4 mb-4 cursor-pointer" onclick="toggleFAQ(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-800">Do I need to register or create an account?</h3>
+                        <i class="fas fa-chevron-down text-gray-500"></i>
+                    </div>
+                    <div class="faq-answer mt-3 text-gray-600">
+                        <p>No registration required! You can use UltraVid immediately without creating an account or providing any personal information. Simply paste the video URL and start downloading.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Download Process -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Download Process</h2>
+                
+                <div class="faq-item bg-gray-50 rounded-lg p-4 mb-4 cursor-pointer" onclick="toggleFAQ(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-800">How do I download a video?</h3>
+                        <i class="fas fa-chevron-down text-gray-500"></i>
+                    </div>
+                    <div class="faq-answer mt-3 text-gray-600">
+                        <p>Downloading is simple: 1) Copy the video URL from TikTok, YouTube, or Instagram, 2) Paste it into our download box, 3) Click the download button, 4) Choose your preferred quality, and 5) Your video will be downloaded automatically.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item bg-gray-50 rounded-lg p-4 mb-4 cursor-pointer" onclick="toggleFAQ(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-800">What video quality options are available?</h3>
+                        <i class="fas fa-chevron-down text-gray-500"></i>
+                    </div>
+                    <div class="faq-answer mt-3 text-gray-600">
+                        <p>UltraVid supports multiple quality options including 480p, 720p HD, 1080p Full HD, and 4K Ultra HD (when available). The available qualities depend on the original video's resolution.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item bg-gray-50 rounded-lg p-4 mb-4 cursor-pointer" onclick="toggleFAQ(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-800">Can I download audio only?</h3>
+                        <i class="fas fa-chevron-down text-gray-500"></i>
+                    </div>
+                    <div class="faq-answer mt-3 text-gray-600">
+                        <p>Yes! UltraVid supports audio extraction. You can download just the audio track in MP3 format, perfect for music videos or podcasts.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical & Troubleshooting -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Technical & Troubleshooting</h2>
+                
+                <div class="faq-item bg-gray-50 rounded-lg p-4 mb-4 cursor-pointer" onclick="toggleFAQ(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-800">Why isn't my download working?</h3>
+                        <i class="fas fa-chevron-down text-gray-500"></i>
+                    </div>
+                    <div class="faq-answer mt-3 text-gray-600">
+                        <p>Common issues include: invalid URLs, private videos, age-restricted content, or platform updates. Make sure the video is public and the URL is correct. If problems persist, try refreshing the page or contact our support.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item bg-gray-50 rounded-lg p-4 mb-4 cursor-pointer" onclick="toggleFAQ(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-800">What devices are supported?</h3>
+                        <i class="fas fa-chevron-down text-gray-500"></i>
+                    </div>
+                    <div class="faq-answer mt-3 text-gray-600">
+                        <p>UltraVid works on all devices with a web browser - Windows, Mac, Linux, iOS, Android, and tablets. Our responsive design ensures a great experience on any screen size.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item bg-gray-50 rounded-lg p-4 mb-4 cursor-pointer" onclick="toggleFAQ(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-800">How fast are downloads?</h3>
+                        <i class="fas fa-chevron-down text-gray-500"></i>
+                    </div>
+                    <div class="faq-answer mt-3 text-gray-600">
+                        <p>Download speeds depend on your internet connection and the video size. Our servers are optimized for fast processing, typically taking 10-30 seconds for most videos.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legal & Safety -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Legal & Safety</h2>
+                
+                <div class="faq-item bg-gray-50 rounded-lg p-4 mb-4 cursor-pointer" onclick="toggleFAQ(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-800">Is downloading videos legal?</h3>
+                        <i class="fas fa-chevron-down text-gray-500"></i>
+                    </div>
+                    <div class="faq-answer mt-3 text-gray-600">
+                        <p>Downloading videos for personal use is generally legal, but you should respect copyright laws and platform terms of service. Always ensure you have permission to download content and don't redistribute copyrighted material.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item bg-gray-50 rounded-lg p-4 mb-4 cursor-pointer" onclick="toggleFAQ(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-800">Is UltraVid safe to use?</h3>
+                        <i class="fas fa-chevron-down text-gray-500"></i>
+                    </div>
+                    <div class="faq-answer mt-3 text-gray-600">
+                        <p>Yes, UltraVid is completely safe. We use secure HTTPS connections, don't store your data, and regularly scan for malware. Your privacy and security are our top priorities.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item bg-gray-50 rounded-lg p-4 mb-4 cursor-pointer" onclick="toggleFAQ(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-800">Do you store downloaded videos?</h3>
+                        <i class="fas fa-chevron-down text-gray-500"></i>
+                    </div>
+                    <div class="faq-answer mt-3 text-gray-600">
+                        <p>No, we don't store any videos on our servers. Videos are processed temporarily and automatically deleted after download. We respect your privacy and don't keep any personal data.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="text-center mt-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Still Have Questions?</h2>
+            <p class="text-gray-600 mb-6">Can't find the answer you're looking for? We're here to help!</p>
+            <a href="/#report-issue" onclick="openModal()" class="bg-red-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-red-700 transition-colors">
+                Contact Support
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-12 w-full">
+        <div class="w-full px-4 py-12">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4 flex items-center">
+                            <i class="fas fa-film mr-2"></i>UltraVid
+                        </h3>
+                        <p class="text-gray-400 text-sm">The ultimate video downloader for TikTok, YouTube, and Instagram. Fast, free, and secure.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold mb-4">Quick Links</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                            <li><a href="/about" class="text-gray-400 hover:text-white transition-colors">About Us</a></li>
+                            <li><a href="/how-to-use" class="text-gray-400 hover:text-white transition-colors">How to Use</a></li>
+                            <li><a href="/supported-platforms" class="text-gray-400 hover:text-white transition-colors">Supported Platforms</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold mb-4">Support</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="/faq" class="text-gray-400 hover:text-white transition-colors">FAQ</a></li>
+                            <li><a href="/video-quality-guide" class="text-gray-400 hover:text-white transition-colors">Video Quality Guide</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold mb-4">Legal</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="/privacy-policy" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+                            <li><a href="/terms-of-service" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+                    <p class="text-gray-400">© 2025 UltraVid. All rights reserved.</p>
+                    <p class="text-gray-500 text-sm mt-2">For educational purposes only. Please respect copyright laws and platform terms of service.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleFAQ(element) {
+            const answer = element.querySelector('.faq-answer');
+            const icon = element.querySelector('i');
+            
+            if (answer.classList.contains('active')) {
+                answer.classList.remove('active');
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            } else {
+                // Close all other FAQs
+                document.querySelectorAll('.faq-answer.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelectorAll('.faq-item i').forEach(item => {
+                    item.classList.remove('fa-chevron-up');
+                    item.classList.add('fa-chevron-down');
+                });
+                
+                // Open clicked FAQ
+                answer.classList.add('active');
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            }
+        }
+
+        // Search functionality
+        document.getElementById('faq-search').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const faqItems = document.querySelectorAll('.faq-item');
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('h3').textContent.toLowerCase();
+                const answer = item.querySelector('.faq-answer p').textContent.toLowerCase();
+                
+                if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = searchTerm === '' ? 'block' : 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -137,6 +137,34 @@ class MyLogger:
 def index():
     return render_template('index.html')
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/faq')
+def faq():
+    return render_template('faq.html')
+
+@app.route('/how-to-use')
+def how_to_use():
+    return render_template('how_to_use.html')
+
+@app.route('/privacy-policy')
+def privacy_policy():
+    return render_template('privacy_policy.html')
+
+@app.route('/terms-of-service')
+def terms_of_service():
+    return render_template('terms_of_service.html')
+
+@app.route('/supported-platforms')
+def supported_platforms():
+    return render_template('supported_platforms.html')
+
+@app.route('/video-quality-guide')
+def video_quality_guide():
+    return render_template('video_quality_guide.html')
+
 def get_tiktok_options(url):
     """Get TikTok-specific yt-dlp options with improved headers and settings"""
     options = {
