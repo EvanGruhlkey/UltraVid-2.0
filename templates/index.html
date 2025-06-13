@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UltraVid - Download YouTube, TikTok, Instagram Reels</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎥</text></svg>">
+    <title>UltraVid - Download TikTok Videos</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' style='stop-color:%23FF4B2B;stop-opacity:1' /><stop offset='100%25' style='stop-color:%23FF416C;stop-opacity:1' /></linearGradient></defs><rect width='64' height='64' rx='12' fill='url(%23grad)'/><path d='M20 18 h24 a4 4 0 0 1 4 4 v20 a4 4 0 0 1 -4 4 h-24 a4 4 0 0 1 -4 -4 v-20 a4 4 0 0 1 4 -4 z' fill='white' opacity='0.9'/><polygon points='28,26 28,38 38,32' fill='%23FF4B2B'/></svg>">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Google AdSense -->
@@ -133,7 +133,7 @@
                     <label for="issueUrl" class="block text-gray-700 font-medium mb-2">Video URL</label>
                     <input type="url" id="issueUrl" name="issueUrl" required
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                           placeholder="https://www.youtube.com/watch?v=...">
+                           placeholder="https://www.tiktok.com/@user/video/...">
                 </div>
                 <div>
                     <label for="issueDescription" class="block text-gray-700 font-medium mb-2">Description</label>
@@ -163,7 +163,7 @@
                     <a href="/about" class="hover:text-gray-200 transition-colors">About</a>
                     <a href="/how-to-use" class="hover:text-gray-200 transition-colors">How to Use</a>
                     <a href="/faq" class="hover:text-gray-200 transition-colors">FAQ</a>
-                    <a href="/supported-platforms" class="hover:text-gray-200 transition-colors">Platforms</a>
+                    <a href="/supported-platforms" class="hover:text-gray-200 transition-colors">TikTok</a>
                 </nav>
                 <button onclick="openModal()" class="flex items-center space-x-2 px-4 py-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all">
                     <i class="fas fa-bug"></i>
@@ -178,7 +178,7 @@
         <!-- Download Form -->
         <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6 mb-8">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Download Ultra Quality Videos</h2>
-            <p class="text-gray-600 mb-6">Download videos from YouTube, TikTok, and Instagram Reels in the highest quality available.</p>
+            <p class="text-gray-600 mb-6">Download TikTok videos without watermark. UltraVid automatically selects the highest quality available.</p>
             
             <form id="downloadForm" class="space-y-4">
                 <div class="flex flex-col space-y-2">
@@ -186,7 +186,7 @@
                     <div class="flex">
                         <input type="url" id="url" name="url" required
                                class="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                               placeholder="https://www.youtube.com/watch?v=...">
+                               placeholder="https://www.tiktok.com/@user/video/...">
                         <button type="submit"
                                 class="px-6 py-2 bg-red-600 text-white rounded-r-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
                             Download
@@ -224,32 +224,20 @@
                 </div>
             </div>
 
-            <!-- Supported Platforms -->
+            <!-- Supported Platform -->
             <div class="mb-12">
-                <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center">Supported Platforms</h2>
-                <div class="grid md:grid-cols-3 gap-8">
-                    <div class="bg-white rounded-lg shadow-lg p-6 card-hover opacity-75">
+                <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center">Supported Platform</h2>
+                <div class="max-w-md mx-auto">
+                    <div class="bg-white rounded-lg shadow-lg p-6 card-hover text-center">
                         <div class="text-red-600 mb-4">
-                            <i class="fab fa-youtube text-3xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2 flex items-center"><span class="line-through">YouTube</span> <span class="ml-2 text-sm font-normal text-gray-500">(Work in Progress)</span></h3>
-                        <p class="text-gray-600 line-through">Download videos, shorts, and live streams (Limited support)</p>
-                    </div>
-                    <div class="bg-white rounded-lg shadow-lg p-6 card-hover">
-                        <div class="text-red-600 mb-4">
-                            <i class="fab fa-tiktok text-3xl"></i>
+                            <i class="fab fa-tiktok text-4xl"></i>
                         </div>
                         <h3 class="text-xl font-bold text-gray-800 mb-2">TikTok</h3>
-                        <p class="text-gray-600">Download TikTok videos without watermark</p>
-                    </div>
-                    <div class="bg-white rounded-lg shadow-lg p-6 card-hover opacity-75">
-                        <div class="text-red-600 mb-4">
-                            <i class="fab fa-instagram text-3xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2 flex items-center"><span class="line-through">Instagram</span> <span class="ml-2 text-sm font-normal text-gray-500">(Work in Progress)</span></h3>
-                        <p class="text-gray-600 line-through">Download Instagram Reels in high quality</p>
+                        <p class="text-gray-600">Download TikTok videos without watermark in highest quality</p>
                     </div>
                 </div>
+            </div>
+
             </div>
         </div>
 
@@ -275,7 +263,7 @@
                                 <span class="text-red-600 font-bold text-xl">1</span>
                             </div>
                             <h3 class="font-bold text-gray-800 mb-2">Copy URL</h3>
-                            <p class="text-gray-600 text-sm">Copy the video URL from TikTok, YouTube, or Instagram</p>
+                            <p class="text-gray-600 text-sm">Copy the video URL from TikTok</p>
                         </div>
                         <div class="text-center">
                             <div class="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
@@ -288,15 +276,15 @@
                             <div class="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                                 <span class="text-red-600 font-bold text-xl">3</span>
                             </div>
-                            <h3 class="font-bold text-gray-800 mb-2">Choose Quality</h3>
-                            <p class="text-gray-600 text-sm">Select your preferred video quality and format</p>
+                            <h3 class="font-bold text-gray-800 mb-2">Auto-Processing</h3>
+                            <p class="text-gray-600 text-sm">UltraVid automatically selects the highest quality available</p>
                         </div>
                         <div class="text-center">
                             <div class="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                                 <span class="text-red-600 font-bold text-xl">4</span>
                             </div>
                             <h3 class="font-bold text-gray-800 mb-2">Download</h3>
-                            <p class="text-gray-600 text-sm">Get your video instantly in high quality</p>
+                            <p class="text-gray-600 text-sm">Get your video instantly in the best quality possible</p>
                         </div>
                     </div>
                 </div>
@@ -317,24 +305,26 @@
                 <!-- Features & Benefits Section -->
                 <div class="mt-16 mb-12 bg-white rounded-lg shadow-lg p-8">
                     <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Why Choose UltraVid?</h2>
-                    <div class="grid md:grid-cols-2 gap-8">
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-4">Advanced Video Processing</h3>
-                            <ul class="space-y-2 text-gray-600">
-                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Support for 4K and HD video downloads</li>
-                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Multiple format options (MP4, AVI, MOV)</li>
-                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Audio extraction capabilities</li>
-                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Batch download support</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-4">User Experience</h3>
-                            <ul class="space-y-2 text-gray-600">
-                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>No registration required</li>
-                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Free to use with no hidden fees</li>
-                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Fast processing and download speeds</li>
-                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Mobile-friendly interface</li>
-                            </ul>
+                    <div class="max-w-4xl mx-auto">
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div class="text-center md:text-left">
+                                <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">Advanced Video Processing</h3>
+                                <ul class="space-y-2 text-gray-600">
+                                    <li class="flex items-center justify-center md:justify-start"><i class="fas fa-check text-green-500 mr-2"></i>Support for 4K and HD video downloads</li>
+                                    <li class="flex items-center justify-center md:justify-start"><i class="fas fa-check text-green-500 mr-2"></i>Automatic highest quality selection</li>
+                                    <li class="flex items-center justify-center md:justify-start"><i class="fas fa-check text-green-500 mr-2"></i>Audio extraction capabilities</li>
+                                    <li class="flex items-center justify-center md:justify-start"><i class="fas fa-check text-green-500 mr-2"></i>Batch download support</li>
+                                </ul>
+                            </div>
+                            <div class="text-center md:text-left">
+                                <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">User Experience</h3>
+                                <ul class="space-y-2 text-gray-600">
+                                    <li class="flex items-center justify-center md:justify-start"><i class="fas fa-check text-green-500 mr-2"></i>No registration required</li>
+                                    <li class="flex items-center justify-center md:justify-start"><i class="fas fa-check text-green-500 mr-2"></i>Free to use with no hidden fees</li>
+                                    <li class="flex items-center justify-center md:justify-start"><i class="fas fa-check text-green-500 mr-2"></i>Fast processing and download speeds</li>
+                                    <li class="flex items-center justify-center md:justify-start"><i class="fas fa-check text-green-500 mr-2"></i>Mobile-friendly interface</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -348,8 +338,8 @@
                             <p class="text-gray-600">Yes, UltraVid is completely free to use. You can download videos without any registration or subscription fees.</p>
                         </div>
                         <div class="border-b pb-4">
-                            <h3 class="text-lg font-bold text-gray-800 mb-2">What video quality can I download?</h3>
-                            <p class="text-gray-600">UltraVid supports downloading videos in their original quality, including HD (720p), Full HD (1080p), and 4K resolution when available.</p>
+                            <h3 class="text-lg font-bold text-gray-800 mb-2">What video quality will I get?</h3>
+                            <p class="text-gray-600">UltraVid automatically downloads videos in the highest quality available from the source, including HD (720p), Full HD (1080p), and 4K resolution when the original video supports it.</p>
                         </div>
                         <div class="border-b pb-4">
                             <h3 class="text-lg font-bold text-gray-800 mb-2">Is it safe to use UltraVid?</h3>
@@ -388,7 +378,7 @@
                         <h3 class="text-xl font-bold mb-4 flex items-center">
                             <i class="fas fa-film mr-2"></i>UltraVid
                         </h3>
-                        <p class="text-gray-400 text-sm">The ultimate video downloader for TikTok, YouTube, and Instagram. Fast, free, and secure.</p>
+                        <p class="text-gray-400 text-sm">The ultimate TikTok video downloader. Fast, free, and secure.</p>
                     </div>
                     <div>
                         <h4 class="font-bold mb-4">Quick Links</h4>
@@ -396,7 +386,7 @@
                             <li><a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
                             <li><a href="/about" class="text-gray-400 hover:text-white transition-colors">About Us</a></li>
                             <li><a href="/how-to-use" class="text-gray-400 hover:text-white transition-colors">How to Use</a></li>
-                            <li><a href="/supported-platforms" class="text-gray-400 hover:text-white transition-colors">Supported Platforms</a></li>
+                            <li><a href="/supported-platforms" class="text-gray-400 hover:text-white transition-colors">TikTok Support</a></li>
                         </ul>
                     </div>
                     <div>
