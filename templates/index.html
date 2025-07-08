@@ -17,6 +17,230 @@
             overlays: {bottom: true}
         });
     </script>
+    
+    <!-- Ad Blocker Detection & Anti-Block Measures -->
+    <script>
+        // Create a bait element that ad blockers typically hide
+        function detectAdBlocker() {
+            var adBait = document.createElement('div');
+            adBait.innerHTML = '&nbsp;';
+            adBait.className = 'adsbox banner-ads advertisement ads ad-placeholder ad-space google-ads';
+            adBait.style.cssText = 'width: 1px !important; height: 1px !important; position: absolute !important; left: -10000px !important; top: -1000px !important;';
+            document.body.appendChild(adBait);
+            
+            setTimeout(function() {
+                var isBlocked = adBait.offsetHeight === 0 || adBait.offsetLeft === 0 || adBait.offsetTop === 0 || adBait.offsetWidth === 0;
+                var computedStyle = window.getComputedStyle(adBait);
+                var isHidden = computedStyle.getPropertyValue('display') === 'none' || computedStyle.getPropertyValue('visibility') === 'hidden';
+                
+                if (isBlocked || isHidden) {
+                    handleAdBlockDetected();
+                }
+                document.body.removeChild(adBait);
+            }, 100);
+        }
+        
+        // Handle when ad blocker is detected
+        function handleAdBlockDetected() {
+            console.log('Ad blocker detected');
+            showAdBlockMessage();
+            
+            // Try to load alternative revenue methods
+            loadAlternativeAds();
+            
+            // Track ad block usage for analytics
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'adblock_detected', {
+                    'event_category': 'adblock',
+                    'event_label': 'user_using_adblocker'
+                });
+            }
+        }
+        
+        // Show polite message to disable ad blocker
+        function showAdBlockMessage() {
+            var adBlockModal = document.createElement('div');
+            adBlockModal.id = 'adblock-modal';
+            adBlockModal.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+                    <div style="background: white; padding: 30px; border-radius: 12px; max-width: 500px; margin: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                        <div style="text-align: center;">
+                            <div style="font-size: 48px; margin-bottom: 15px;">🚫</div>
+                            <h3 style="color: #333; margin-bottom: 15px; font-size: 24px;">Ad Blocker Detected</h3>
+                            <p style="color: #666; margin-bottom: 20px; line-height: 1.6;">
+                                UltraVid is <strong>100% free</strong> thanks to ads. Please consider disabling your ad blocker to support us and keep this service free for everyone! 🙏
+                            </p>
+                            <div style="margin: 20px 0;">
+                                <button onclick="closeAdBlockModal()" style="background: #FF416C; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; margin-right: 10px; font-weight: bold;">I'll Disable It</button>
+                                <button onclick="continueWithAdBlock()" style="background: #666; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer;">Continue Anyway</button>
+                            </div>
+                            <small style="color: #999;">We promise our ads are non-intrusive and help keep UltraVid free!</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(adBlockModal);
+        }
+        
+        // Close ad block modal
+        function closeAdBlockModal() {
+            var modal = document.getElementById('adblock-modal');
+            if (modal) {
+                modal.remove();
+            }
+            // Refresh page to check if ad blocker was disabled
+            setTimeout(function() {
+                location.reload();
+            }, 1000);
+        }
+        
+        // Continue with ad blocker enabled
+        function continueWithAdBlock() {
+            var modal = document.getElementById('adblock-modal');
+            if (modal) {
+                modal.remove();
+            }
+            // Show smaller reminder banner
+            showAdBlockReminder();
+        }
+        
+        // Show smaller reminder banner
+        function showAdBlockReminder() {
+            var banner = document.createElement('div');
+            banner.innerHTML = `
+                <div style="background: linear-gradient(135deg, #FF4B2B 0%, #FF416C 100%); color: white; padding: 10px; text-align: center; position: fixed; top: 0; left: 0; right: 0; z-index: 9999; font-size: 14px;">
+                    💡 <strong>Tip:</strong> Disable your ad blocker to support UltraVid and unlock faster downloads!
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 4px 8px; border-radius: 4px; margin-left: 10px; cursor: pointer;">×</button>
+                </div>
+            `;
+            document.body.appendChild(banner);
+            
+            // Auto-hide after 10 seconds
+            setTimeout(function() {
+                if (banner.parentElement) {
+                    banner.remove();
+                }
+            }, 10000);
+        }
+        
+        // Load alternative revenue streams for ad block users
+        function loadAlternativeAds() {
+            // Try alternative ad networks that might not be blocked
+            loadAcceptableAds();
+            
+            // Show donation/support options
+            loadSupportOptions();
+        }
+        
+        // Load "Acceptable Ads" that some ad blockers allow
+        function loadAcceptableAds() {
+            var acceptableAd = document.createElement('div');
+            acceptableAd.innerHTML = `
+                <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+                    <h4 style="color: #495057; margin-bottom: 10px;">Support UltraVid</h4>
+                    <p style="color: #6c757d; font-size: 14px; margin-bottom: 15px;">Help us keep this service free and improve our servers!</p>
+                    <button onclick="window.open('https://www.buymeacoffee.com/ultravid', '_blank')" style="background: #FF416C; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin: 5px;">☕ Buy us a Coffee</button>
+                    <button onclick="shareUltraVid()" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin: 5px;">📢 Share UltraVid</button>
+                </div>
+            `;
+            
+            // Insert after the main form
+            var form = document.querySelector('form');
+            if (form && form.parentElement) {
+                form.parentElement.insertBefore(acceptableAd, form.nextSibling);
+            }
+        }
+        
+        // Load support options
+        function loadSupportOptions() {
+            // This could include crypto donations, Patreon, etc.
+            console.log('Alternative revenue options loaded for ad block users');
+        }
+        
+        // Share function
+        function shareUltraVid() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'UltraVid - Free TikTok Video Downloader',
+                    text: 'Download TikTok videos for free with UltraVid!',
+                    url: window.location.href
+                });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(window.location.href).then(function() {
+                    alert('UltraVid link copied to clipboard! Share it with your friends! 🎉');
+                });
+            }
+        }
+        
+        // Advanced ad block detection methods
+        function advancedAdBlockDetection() {
+            // Method 1: Check if AdSense script loaded
+            setTimeout(function() {
+                if (typeof window.adsbygoogle === 'undefined') {
+                    handleAdBlockDetected();
+                    return;
+                }
+                
+                // Method 2: Check if ads are actually rendering
+                var testAd = document.createElement('ins');
+                testAd.className = 'adsbygoogle';
+                testAd.style.cssText = 'display:block; width:1px; height:1px; position:absolute; left:-10000px;';
+                testAd.setAttribute('data-ad-client', 'ca-pub-5180588862932336');
+                testAd.setAttribute('data-ad-slot', '1234567890');
+                document.body.appendChild(testAd);
+                
+                try {
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                    setTimeout(function() {
+                        if (testAd.innerHTML === '') {
+                            handleAdBlockDetected();
+                        }
+                        document.body.removeChild(testAd);
+                    }, 1000);
+                } catch (e) {
+                    handleAdBlockDetected();
+                    document.body.removeChild(testAd);
+                }
+            }, 2000);
+        }
+        
+        // Run detection when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            detectAdBlocker();
+            advancedAdBlockDetection();
+        });
+        
+        // Also run detection after a delay in case DOM wasn't ready
+        setTimeout(function() {
+            detectAdBlocker();
+            advancedAdBlockDetection();
+        }, 3000);
+    </script>
+    
+    <!-- Anti-Ad-Block CSS -->
+    <style>
+        /* Make ads harder to block by using non-obvious class names */
+        .content-support, .site-funding, .revenue-block {
+            min-height: 100px;
+            margin: 20px 0;
+        }
+        
+        /* Hide content if ad blocker detected (optional, use sparingly) */
+        .adblock-hide {
+            display: none;
+        }
+        
+        /* Style for acceptable ads */
+        .support-message {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+    </style>
     <style>
         body {
             display: flex;

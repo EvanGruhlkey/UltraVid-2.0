@@ -17,6 +17,89 @@
             overlays: {bottom: true}
         });
     </script>
+    
+    <!-- Ad Blocker Detection & Anti-Block Measures -->
+    <script>
+        function detectAdBlocker() {
+            var adBait = document.createElement('div');
+            adBait.innerHTML = '&nbsp;';
+            adBait.className = 'adsbox banner-ads advertisement ads ad-placeholder ad-space google-ads';
+            adBait.style.cssText = 'width: 1px !important; height: 1px !important; position: absolute !important; left: -10000px !important; top: -1000px !important;';
+            document.body.appendChild(adBait);
+            
+            setTimeout(function() {
+                var isBlocked = adBait.offsetHeight === 0 || adBait.offsetLeft === 0 || adBait.offsetTop === 0 || adBait.offsetWidth === 0;
+                var computedStyle = window.getComputedStyle(adBait);
+                var isHidden = computedStyle.getPropertyValue('display') === 'none' || computedStyle.getPropertyValue('visibility') === 'hidden';
+                
+                if (isBlocked || isHidden) {
+                    handleAdBlockDetected();
+                }
+                document.body.removeChild(adBait);
+            }, 100);
+        }
+        
+        function handleAdBlockDetected() {
+            showAdBlockMessage();
+            loadAlternativeAds();
+        }
+        
+        function showAdBlockMessage() {
+            var adBlockModal = document.createElement('div');
+            adBlockModal.id = 'adblock-modal';
+            adBlockModal.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+                    <div style="background: white; padding: 30px; border-radius: 12px; max-width: 500px; margin: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                        <div style="text-align: center;">
+                            <div style="font-size: 48px; margin-bottom: 15px;">🚫</div>
+                            <h3 style="color: #333; margin-bottom: 15px; font-size: 24px;">Ad Blocker Detected</h3>
+                            <p style="color: #666; margin-bottom: 20px; line-height: 1.6;">
+                                UltraVid is <strong>100% free</strong> thanks to ads. Please consider disabling your ad blocker! 🙏
+                            </p>
+                            <div style="margin: 20px 0;">
+                                <button onclick="closeAdBlockModal()" style="background: #FF416C; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; margin-right: 10px; font-weight: bold;">I'll Disable It</button>
+                                <button onclick="continueWithAdBlock()" style="background: #666; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer;">Continue</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(adBlockModal);
+        }
+        
+        function closeAdBlockModal() {
+            var modal = document.getElementById('adblock-modal');
+            if (modal) modal.remove();
+            setTimeout(() => location.reload(), 1000);
+        }
+        
+        function continueWithAdBlock() {
+            var modal = document.getElementById('adblock-modal');
+            if (modal) modal.remove();
+        }
+        
+        function loadAlternativeAds() {
+            var supportBox = document.createElement('div');
+            supportBox.innerHTML = `
+                <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+                    <h4 style="color: #495057; margin-bottom: 10px;">Support UltraVid</h4>
+                    <p style="color: #6c757d; font-size: 14px; margin-bottom: 15px;">Help us keep this service free!</p>
+                    <button onclick="window.open('https://www.buymeacoffee.com/ultravid', '_blank')" style="background: #FF416C; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">☕ Support Us</button>
+                </div>
+            `;
+            var content = document.querySelector('.container') || document.querySelector('main') || document.body;
+            content.appendChild(supportBox);
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            detectAdBlocker();
+            setTimeout(() => {
+                if (typeof window.adsbygoogle === 'undefined') {
+                    handleAdBlockDetected();
+                }
+            }, 2000);
+        });
+    </script>
     <style>
         .gradient-bg { background: linear-gradient(135deg, #FF4B2B 0%, #FF416C 100%); }
         .platform-card { transition: all 0.3s ease; border-left: 4px solid transparent; }
