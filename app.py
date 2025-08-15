@@ -210,14 +210,6 @@ def get_tiktok_options(url):
             'sec-ch-ua-platform': '"Windows"',
         },
         
-        # TikTok-specific extractor arguments
-        'extractor_args': {
-            'tiktok': {
-                'webpage_download_timeout': 60,
-                'api_hostname': 'api.tiktokv.com',
-            }
-        },
-        
         # Add some delay between requests to avoid rate limiting
         'sleep_interval': 2,
         'max_sleep_interval': 5,
@@ -261,6 +253,39 @@ def download_video():
         # Get TikTok-specific options
         ydl_opts = get_tiktok_options(url)
         ydl_opts['outtmpl'] = os.path.join(temp_dir, '%(id)s.%(ext)s')
+
+        # Harden headers and avoid brittle extractor overrides
+        ydl_opts.pop('extractor_args', None)
+        headers = ydl_opts.get('http_headers', {})
+        headers.setdefault('Referer', 'https://www.tiktok.com/')
+        headers.setdefault('Origin', 'https://www.tiktok.com')
+        ydl_opts['http_headers'] = headers
+
+        # Ensure ffmpeg is available; if not, attempt install and then gracefully degrade
+        if not check_ffmpeg():
+            try:
+                install_ffmpeg()
+            except Exception:
+                pass
+        
+        # If ffmpeg.exe exists in current dir, point yt-dlp to it
+        ffmpeg_exe_path = os.path.join(os.getcwd(), 'ffmpeg.exe')
+        if os.path.exists(ffmpeg_exe_path):
+            ydl_opts['ffmpeg_location'] = ffmpeg_exe_path
+        
+        # Also detect system ffmpeg/ffprobe via PATH
+        ffmpeg_system_path = shutil.which('ffmpeg')
+        ffprobe_system_path = shutil.which('ffprobe')
+        if ffmpeg_system_path and not ydl_opts.get('ffmpeg_location'):
+            # Provide directory so yt-dlp can find both ffmpeg and ffprobe
+            ydl_opts['ffmpeg_location'] = os.path.dirname(ffmpeg_system_path)
+        
+        # If ffprobe is not available, avoid postprocessing/merging that requires it
+        ffprobe_local_exe = os.path.join(os.getcwd(), 'ffprobe.exe')
+        if not (ffprobe_system_path or os.path.exists(ffprobe_local_exe)):
+            ydl_opts.pop('postprocessors', None)
+            ydl_opts.pop('merge_output_format', None)
+            ydl_opts['format'] = 'best[ext=mp4][protocol!=m3u8]/best[protocol!=m3u8]/best'
         
         # Add some delay before making requests
         time.sleep(2)
@@ -337,7 +362,12 @@ def download_video():
                 
                 if not download_info or not isinstance(download_info, dict):
                     logger.error(f"Invalid download info: {type(download_info)}")
-                    return jsonify({'error': 'Failed to download video'}), 500
+                    # As a fallback, attempt bestaudio+bestvideo merge or direct URL
+                    try:
+                        with yt_dlp.YoutubeDL({**ydl_opts, 'format': 'bv*+ba/b'}) as fallback_ydl:
+                            download_info = fallback_ydl.extract_info(url, download=True)
+                    except Exception as _:
+                        return jsonify({'error': 'Failed to download video'}), 500
 
                 # Find the downloaded file
                 downloaded_files = [f for f in os.listdir(temp_dir) 
@@ -362,17 +392,27 @@ def download_video():
                 
                 logger.info(f"Downloaded file size: {file_size} bytes")
                 
+                # Determine actual extension and MIME type
+                actual_ext = os.path.splitext(downloaded_files[0])[1].lstrip('.').lower()
+                mime_map = {
+                    'mp4': 'video/mp4',
+                    'm4v': 'video/x-m4v',
+                    'mov': 'video/quicktime',
+                    'webm': 'video/webm'
+                }
+                chosen_mime = mime_map.get(actual_ext, 'application/octet-stream')
+                
                 # Create a response with the file
                 response = send_file(
                     downloaded_file_path,
                     as_attachment=True,
-                    download_name=f"{video_title}.mp4",
-                    mimetype='video/mp4'
+                    download_name=f"{video_title}.{actual_ext}",
+                    mimetype=chosen_mime
                 )
                 
                 # Set the Content-Disposition header directly
-                safe_filename = f"{video_title}.mp4".replace('"', '\\"')  # Escape quotes
-                response.headers['Content-Disposition'] = f'attachment; filename="{safe_filename}"; filename*=UTF-8\'\'{safe_filename}'
+                safe_filename = f"{video_title}.{actual_ext}".replace('"', '\\"')  # Escape quotes
+                response.headers['Content-Disposition'] = f'attachment; filename="{safe_filename}"; filename*=UTF-8''{safe_filename}'
                 
                 # Add cleanup callback to the response
                 @response.call_on_close
@@ -397,8 +437,10 @@ def download_video():
                     return jsonify({'error': 'This TikTok video is private and cannot be downloaded.'}), 400
                 elif "Video unavailable" in error_msg or "unavailable" in error_msg.lower():
                     return jsonify({'error': 'This TikTok video is unavailable or has been removed.'}), 400
-                elif "getaddrinfo failed" in error_msg:
+                elif "getaddrinfo failed" in error_msg or "name or service not known" in error_msg.lower():
                     return jsonify({'error': 'Network connection error. Please check your internet connection.'}), 500
+                elif "403" in error_msg or "http error 403" in error_msg.lower():
+                    return jsonify({'error': 'TikTok is blocking requests (HTTP 403). Please try again later.'}), 429
                 elif "timeout" in error_msg.lower():
                     return jsonify({'error': 'Request timed out. TikTok servers may be slow or blocking requests.'}), 408
                 else:
