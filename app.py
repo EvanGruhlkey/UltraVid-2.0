@@ -242,6 +242,10 @@ def download_video():
 
         logger.info(f"Attempting to download TikTok video from URL: {url}")
 
+        # Check system requirements first
+        ffmpeg_available = check_ffmpeg()
+        logger.info(f"FFmpeg available: {ffmpeg_available}")
+        
         # Optionally update yt-dlp (disabled by default for performance). Enable by setting AUTO_UPDATE_YTDLP=true
         if os.environ.get('AUTO_UPDATE_YTDLP', 'false').lower() in ['1', 'true', 'yes']:
             logger.info("Updating yt-dlp to latest version...")
@@ -452,7 +456,9 @@ def download_video():
                 return jsonify({'error': f'Unexpected error: {str(e)}'}), 500
 
     except Exception as e:
+        import traceback
         logger.error(f"Top-level error: {str(e)}")
+        logger.error(f"Full traceback: {traceback.format_exc()}")
         return jsonify({'error': f'Server error: {str(e)}'}), 500
     finally:
         # Cleanup temp directory if it still exists
@@ -466,7 +472,13 @@ def download_video():
 @app.route('/health')
 def health_check():
     """Simple health check endpoint"""
-    return jsonify({'status': 'ok', 'message': 'TikTok downloader is running'})
+    ffmpeg_status = check_ffmpeg()
+    return jsonify({
+        'status': 'ok', 
+        'message': 'TikTok downloader is running',
+        'ffmpeg_available': ffmpeg_status,
+        'python_version': sys.version
+    })
 
 @app.route('/debug-formats', methods=['POST'])
 def debug_video_formats():
