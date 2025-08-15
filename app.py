@@ -242,9 +242,10 @@ def download_video():
 
         logger.info(f"Attempting to download TikTok video from URL: {url}")
 
-        # Update yt-dlp before attempting download
-        logger.info("Updating yt-dlp to latest version...")
-        update_ytdlp()
+        # Optionally update yt-dlp (disabled by default for performance). Enable by setting AUTO_UPDATE_YTDLP=true
+        if os.environ.get('AUTO_UPDATE_YTDLP', 'false').lower() in ['1', 'true', 'yes']:
+            logger.info("Updating yt-dlp to latest version...")
+            update_ytdlp()
 
         # Create a temporary directory for downloads
         temp_dir = tempfile.mkdtemp()
@@ -288,13 +289,13 @@ def download_video():
             ydl_opts['format'] = 'best[ext=mp4][protocol!=m3u8]/best[protocol!=m3u8]/best'
         
         # Add some delay before making requests
-        time.sleep(2)
+        time.sleep(1)
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             try:
                 # Get video info first with retry logic
                 logger.info("Extracting video information...")
-                max_retries = 3
+                max_retries = 4
                 info = None
                 
                 for attempt in range(max_retries):
@@ -351,9 +352,9 @@ def download_video():
                         break
                     except yt_dlp.utils.DownloadError as e:
                         error_msg = str(e).lower()
-                        if "unable to extract" in error_msg and attempt < max_retries - 1:
+                        if ("unable to extract" in error_msg or "postprocessing: ffmpeg not found" in error_msg) and attempt < max_retries - 1:
                             logger.warning(f"Download attempt {attempt + 1} failed. Retrying...")
-                            time.sleep(10 * (attempt + 1))
+                            time.sleep(5 * (attempt + 1))
                             continue
                         raise e
                 
@@ -441,8 +442,8 @@ def download_video():
                     return jsonify({'error': 'Network connection error. Please check your internet connection.'}), 500
                 elif "403" in error_msg or "http error 403" in error_msg.lower():
                     return jsonify({'error': 'TikTok is blocking requests (HTTP 403). Please try again later.'}), 429
-                elif "timeout" in error_msg.lower():
-                    return jsonify({'error': 'Request timed out. TikTok servers may be slow or blocking requests.'}), 408
+                elif "timeout" in error_msg.lower() or "timed out" in error_msg.lower():
+                    return jsonify({'error': 'Request timed out. TikTok may be rate-limiting. Please try again shortly.'}), 408
                 else:
                     return jsonify({'error': f'TikTok download failed: {error_msg}'}), 500
                     
