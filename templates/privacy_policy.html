@@ -3,50 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy - UltraVid</title>
+    <title>UltraVid - Privacy Policy</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="/static/css/glass.css" rel="stylesheet">
 </head>
 <body class="min-h-screen">
-    <div class="bg-layer"></div>
+    <div class="bg-layer" id="cssBg"></div>
     <div class="noise-layer"></div>
-    <header class="nav-glass text-white">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <i class="fas fa-film text-2xl"></i>
-                    <h1 class="text-2xl font-bold">UltraVid</h1>
-                </div>
-                <nav class="hidden md:flex items-center space-x-6">
-                    <a href="/" class="hover:text-gray-200">Home</a>
-                    <a href="/how-to-use" class="hover:text-gray-200">How to Use</a>
-                    <a href="/faq" class="hover:text-gray-200">FAQ</a>
-                </nav>
-            </div>
-        </div>
-    </header>
 
-    <main class="container mx-auto px-4 py-12">
-        <div class="container-narrow mx-auto glass stroke p-8 text-white">
-            <h2 class="text-3xl font-bold mb-4 text-center">Privacy Policy</h2>
-            <p class="muted text-center mb-6">We collect minimal data necessary to operate the service. We do not store downloaded videos or require registration.</p>
-            <ul class="space-y-3">
-                <li class="glass-light p-4 rounded-lg"><span class="font-semibold">Data</span> <span class="muted text-sm">Temporary processing only</span></li>
-                <li class="glass-light p-4 rounded-lg"><span class="font-semibold">Security</span> <span class="muted text-sm">HTTPS and best practices</span></li>
-                <li class="glass-light p-4 rounded-lg"><span class="font-semibold">Third-parties</span> <span class="muted text-sm">No ad networks</span></li>
-            </ul>
+    <main class="min-h-screen flex items-center justify-center px-4 pb-24">
+        <div class="container-hero mx-auto glass stroke gloss p-0 md:p-0 text-white overflow-hidden" id="heroGlass">
+            <div class="flex items-center space-x-2 px-4 pt-3">
+                <span class="w-3 h-3 rounded-full" style="background:#ff5f56"></span>
+                <span class="w-3 h-3 rounded-full" style="background:#ffbd2e"></span>
+                <span class="w-3 h-3 rounded-full" style="background:#27c93f"></span>
+            </div>
+            <div class="px-6 py-6 md:px-8 md:py-8">
+                <div class="glass-light rounded-lg p-4 md:p-5 w-full max-w-2xl mx-auto">
+                    <h1 class="text-2xl font-bold mb-4">Privacy Policy</h1>
+                    <div class="space-y-4 text-sm">
+                        <p>Last updated: September 2, 2025</p>
+                        <p>Your privacy is important to us:</p>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li>We do not store any personal information</li>
+                            <li>We do not track your activity</li>
+                            <li>We do not use cookies</li>
+                            <li>Downloaded videos are not saved on our servers</li>
+                        </ul>
+                        <p><a href="/" class="underline hover:opacity-80">Return to home</a></p>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
-    <footer class="mt-16 w-full footer-min">
-        <div class="w-full px-4 py-8">
+    <footer class="w-full footer-min fixed left-0 right-0 bottom-0" style="z-index:10; background: transparent; border: 0">
+        <div class="w-full px-4 py-4">
             <div class="max-w-6xl mx-auto text-center">
                 <p>© 2025 UltraVid</p>
-                <p class="text-xs mt-1">For educational purposes only</p>
             </div>
         </div>
     </footer>
 </body>
 </html>
-
