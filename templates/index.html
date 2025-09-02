@@ -3,1181 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UltraVid - Download TikTok Videos</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' style='stop-color:%23FF4B2B;stop-opacity:1' /><stop offset='100%25' style='stop-color:%23FF416C;stop-opacity:1' /></linearGradient></defs><rect width='64' height='64' rx='12' fill='url(%23grad)'/><path d='M20 18 h24 a4 4 0 0 1 4 4 v20 a4 4 0 0 1 -4 4 h-24 a4 4 0 0 1 -4 -4 v-20 a4 4 0 0 1 4 -4 z' fill='white' opacity='0.9'/><polygon points='28,26 28,38 38,32' fill='%23FF4B2B'/></svg>">
+    <title>UltraVid - TikTok Downloader</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5180588862932336" crossorigin="anonymous"></script>
-    <!-- Google Auto Ads -->
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({
-            google_ad_client: "ca-pub-5180588862932336",
-            enable_page_level_ads: true,
-            overlays: {bottom: true}
-        });
-    </script>
+    <link href="/static/css/glass.css" rel="stylesheet">
+</head>
+<body class="min-h-screen">
+    <div class="carousel-layer" id="carouselLayer">
+        <div class="carousel-track" id="carouselTrack"></div>
+    </div>
+    <video id="bgVideo" class="fixed inset-0 w-full h-full object-cover" autoplay loop muted playsinline style="z-index:-4; filter: blur(28px) saturate(115%) brightness(0.6); display:none"></video>
+    <div class="bg-layer" id="cssBg"></div>
+    <div class="reels-layer" id="cssReels"></div>
+    <div class="noise-layer"></div>
     
 
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        main {
-            flex-grow: 1;
-        }
-        .gradient-bg {
-            background: linear-gradient(135deg, #FF4B2B 0%, #FF416C 100%);
-        }
-        .card-hover {
-            transition: transform 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-5px);
-        }
-        .loading {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-        }
-        .loading-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            color: white;
-        }
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #FF416C;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-        }
-        .modal-content {
-            position: relative;
-            background: white;
-            margin: 15% auto;
-            padding: 20px;
-            width: 90%;
-            max-width: 500px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .close-button {
-            position: absolute;
-            right: 20px;
-            top: 20px;
-            font-size: 24px;
-            cursor: pointer;
-            color: #666;
-        }
-        .close-button:hover {
-            color: #333;
-        }
-        /* Ad container styles */
-        .ad-container {
-            min-height: 100px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 1rem 0;
-            overflow: hidden;
-        }
+    <!-- Hero -->
+    <main class="min-h-screen flex items-center justify-center px-4">
+        <div class="container-hero mx-auto glass stroke gloss p-0 md:p-0 text-white overflow-hidden" id="heroGlass">
+            <div class="flex items-center space-x-2 px-4 pt-3">
+                <span class="w-3 h-3 rounded-full" style="background:#ff5f56"></span>
+                <span class="w-3 h-3 rounded-full" style="background:#ffbd2e"></span>
+                <span class="w-3 h-3 rounded-full" style="background:#27c93f"></span>
+                <div class="flex-1 text-center text-xs tracking-wider muted">ultrav id terminal</div>
+            </div>
+            <div class="px-6 py-6 md:px-8 md:py-8" style="--carousel-duration: 180s;">
+                <div class="glass-light rounded-lg p-4 md:p-5">
+                    <div class="text-xs font-mono mb-2 opacity-80">$ ultraviddl</div>
+                    <form id="downloadForm" class="space-y-3">
+                        <div class="flex flex-col md:flex-row gap-3">
+                            <input type="url" id="url" name="url" required class="input-glass flex-1 px-4 py-3" placeholder="https://www.tiktok.com/@user/video/...">
+                            <button type="submit" class="btn-glass px-6 py-3 font-semibold">Download</button>
+                        </div>
+                    </form>
+                    <pre id="termLog" class="mt-3 text-xs font-mono muted whitespace-pre-wrap"></pre>
+                </div>
+                <p class="text-xs mt-3 text-center muted">For educational use. Respect platform terms.</p>
+            </div>
+        </div>
+
         
-        /* Sticky sidebar ad styles */
-        .sticky-sidebar-ad {
-            position: fixed;
-            top: 50%;
-            right: 20px;
-            transform: translateY(-50%);
-            z-index: 100;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-        }
-        
-        /* Hide sidebar ad on mobile */
-        @media (max-width: 1200px) {
-            .sticky-sidebar-ad {
-                display: none;
-            }
-        }
-        
-        /* Mobile floating ad */
-        .mobile-floating-ad {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            display: none;
-        }
-        
-        /* Show mobile floating ad only on mobile */
-        @media (max-width: 768px) {
-            .mobile-floating-ad {
-                display: block;
-            }
-        }
-    </style>
-</head>
-<body class="bg-gray-100">
-    <!-- Loading Overlay -->
-    <div id="loading" class="loading">
-        <div class="loading-content">
-            <div class="spinner"></div>
-            <p class="text-xl font-semibold">Downloading your video...</p>
-            <p class="text-sm mt-2">This may take a few moments</p>
-        </div>
-    </div>
-
-    <!-- Issue Report Modal -->
-    <div id="issueModal" class="modal">
-        <div class="modal-content">
-            <span class="close-button" onclick="closeModal()">&times;</span>
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Report an Issue</h2>
-            <div id="issueMessage" class="hidden mb-4 p-4 rounded-lg"></div>
-            <form id="issueForm" class="space-y-4">
-                <div>
-                    <label for="issueType" class="block text-gray-700 font-medium mb-2">Issue Type</label>
-                    <select id="issueType" name="issueType" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
-                        <option value="">Select an issue type</option>
-                        <option value="download">Download Failed</option>
-                        <option value="quality">Video Quality Issue</option>
-                        <option value="audio">Audio Problem</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="issueUrl" class="block text-gray-700 font-medium mb-2">Video URL</label>
-                    <input type="url" id="issueUrl" name="issueUrl" required
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                           placeholder="https://www.tiktok.com/@user/video/...">
-                </div>
-                <div>
-                    <label for="issueDescription" class="block text-gray-700 font-medium mb-2">Description</label>
-                    <textarea id="issueDescription" name="issueDescription" required
-                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                              rows="4"
-                              placeholder="Please describe the issue you're experiencing..."></textarea>
-                </div>
-                <button type="submit"
-                        class="w-full px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
-                    Submit Issue
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Header -->
-    <header class="gradient-bg text-white shadow-lg">
-        <div class="container mx-auto px-4 py-6">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <i class="fas fa-film text-3xl"></i>
-                    <h1 class="text-3xl font-bold">UltraVid</h1>
-                </div>
-                <nav class="hidden md:flex items-center space-x-6">
-                    <a href="/" class="hover:text-gray-200 transition-colors">Home</a>
-                    <a href="/about" class="hover:text-gray-200 transition-colors">About</a>
-                    <a href="/how-to-use" class="hover:text-gray-200 transition-colors">How to Use</a>
-                    <a href="/faq" class="hover:text-gray-200 transition-colors">FAQ</a>
-                    <a href="/supported-platforms" class="hover:text-gray-200 transition-colors">TikTok</a>
-                </nav>
-                <button onclick="openModal()" class="flex items-center space-x-2 px-4 py-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all">
-                    <i class="fas fa-bug"></i>
-                    <span>Report Issue</span>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Top Banner Ad - High Visibility -->
-    <div class="bg-gray-50 py-4">
-        <div class="container mx-auto px-4 text-center">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-5180588862932336"
-                 data-ad-slot="5652532292"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
-        <!-- Download Form -->
-        <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Download Ultra Quality Videos</h2>
-            <p class="text-gray-600 mb-6">Download TikTok videos without watermark. UltraVid automatically selects the highest quality available.</p>
-            
-            <form id="downloadForm" class="space-y-4">
-                <div class="flex flex-col space-y-2">
-                    <label for="url" class="text-gray-700 font-medium">Video URL</label>
-                    <div class="flex">
-                        <input type="url" id="url" name="url" required
-                               class="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                               placeholder="https://www.tiktok.com/@user/video/...">
-                        <button type="submit"
-                                class="px-6 py-2 bg-red-600 text-white rounded-r-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
-                            Download
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <!-- Post-Form Ad - High Engagement Area -->
-        <div class="text-center my-8">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-5180588862932336"
-                 data-ad-slot="5418412785"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
-
-        <!-- Comprehensive Content Section -->
-        <div class="max-w-6xl mx-auto mb-12">
-            <!-- What is UltraVid Section -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-12">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">What is UltraVid?</h2>
-                <div class="max-w-4xl mx-auto">
-                    <p class="text-lg text-gray-600 mb-6 leading-relaxed">
-                        UltraVid is a professional-grade TikTok video downloader designed to help users save their favorite content for offline viewing. Our platform stands out in the crowded market of video downloaders by offering unparalleled quality, speed, and security.
-                    </p>
-
-                    <!-- In-Content Ad 1 -->
-                    <div class="text-center my-8">
-                        <ins class="adsbygoogle"
-                             style="display:block; text-align:center;"
-                             data-ad-layout="in-article"
-                             data-ad-format="fluid"
-                             data-ad-client="ca-pub-5180588862932336"
-                             data-ad-slot="6957875105"></ins>
-                        <script>
-                             (adsbygoogle = window.adsbygoogle || []).push({});
-                        </script>
-                    </div>
-
-                    <p class="text-lg text-gray-600 mb-6 leading-relaxed">
-                        Whether you're a content creator looking to archive your work, a student saving educational videos, or simply someone who wants to enjoy TikTok content without an internet connection, UltraVid provides the perfect solution. Our advanced technology ensures that you get the highest possible quality while maintaining the original video's integrity.
-                    </p>
-
-                    <!-- In-Content Ad 2 -->
-                    <div class="text-center my-8">
-                        <ins class="adsbygoogle"
-                             style="display:block"
-                             data-ad-format="autorelaxed"
-                             data-ad-client="ca-pub-5180588862932336"
-                             data-ad-slot="5226841098"></ins>
-                        <script>
-                             (adsbygoogle = window.adsbygoogle || []).push({});
-                        </script>
-                    </div>
-                    <div class="grid md:grid-cols-2 gap-8 mt-8">
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-4">Key Benefits</h3>
-                            <ul class="space-y-3 text-gray-600">
-                                <li class="flex items-start"><i class="fas fa-check text-green-500 mr-3 mt-1"></i><span>Download videos in original quality up to 4K resolution</span></li>
-                                <li class="flex items-start"><i class="fas fa-check text-green-500 mr-3 mt-1"></i><span>Remove watermarks automatically for clean viewing</span></li>
-                                <li class="flex items-start"><i class="fas fa-check text-green-500 mr-3 mt-1"></i><span>Extract audio-only files when needed</span></li>
-                                <li class="flex items-start"><i class="fas fa-check text-green-500 mr-3 mt-1"></i><span>Support for all TikTok video formats</span></li>
-                                <li class="flex items-start"><i class="fas fa-check text-green-500 mr-3 mt-1"></i><span>Batch download capabilities for multiple videos</span></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-4">Perfect For</h3>
-                            <ul class="space-y-3 text-gray-600">
-                                <li class="flex items-start"><i class="fas fa-users text-blue-500 mr-3 mt-1"></i><span>Content creators archiving their work</span></li>
-                                <li class="flex items-start"><i class="fas fa-graduation-cap text-blue-500 mr-3 mt-1"></i><span>Students saving educational content</span></li>
-                                <li class="flex items-start"><i class="fas fa-plane text-blue-500 mr-3 mt-1"></i><span>Travelers preparing offline entertainment</span></li>
-                                <li class="flex items-start"><i class="fas fa-wifi text-blue-500 mr-3 mt-1"></i><span>Users with limited internet connectivity</span></li>
-                                <li class="flex items-start"><i class="fas fa-heart text-blue-500 mr-3 mt-1"></i><span>Anyone wanting to save favorite videos</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Mid-Content Ad Placement -->
-            <div class="text-center my-12">
-                <ins class="adsbygoogle"
-                     style="display:block"
-                     data-ad-client="ca-pub-5180588862932336"
-                     data-ad-slot="3126441308"
-                     data-ad-format="auto"
-                     data-full-width-responsive="true"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-            </div>
-
-            <!-- How to Download TikTok Videos Tutorial -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-12">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Complete Guide: How to Download TikTok Videos</h2>
-                <div class="max-w-4xl mx-auto">
-                    <p class="text-lg text-gray-600 mb-8 leading-relaxed">
-                        Downloading TikTok videos with UltraVid is incredibly simple, but we want to make sure you get the best results every time. Follow this comprehensive guide to ensure successful downloads.
-                    </p>
-                    
-                    <div class="space-y-8">
-                        <div class="border-l-4 border-red-500 pl-6">
-                            <h3 class="text-xl font-bold text-gray-800 mb-3">Step 1: Find Your TikTok Video</h3>
-                            <p class="text-gray-600 mb-4">
-                                Navigate to TikTok and find the video you want to download. You can search for specific content, browse trending videos, or visit a creator's profile. Make sure the video is publicly accessible.
-                            </p>
-
-                            <!-- In-Tutorial Ad -->
-                            <div class="text-center my-6">
-                                <ins class="adsbygoogle"
-                                     style="display:block"
-                                     data-ad-format="fluid"
-                                     data-ad-layout-key="-6t+ed+2i-1n-4w"
-                                     data-ad-client="ca-pub-5180588862932336"
-                                     data-ad-slot="6160648811"></ins>
-                                <script>
-                                     (adsbygoogle = window.adsbygoogle || []).push({});
-                                </script>
-                            </div>
-
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <h4 class="font-semibold text-gray-800 mb-2">Pro Tips:</h4>
-                                <ul class="text-sm text-gray-600 space-y-1">
-                                    <li>• Ensure the video is not private or restricted</li>
-                                    <li>• Check that the video is fully loaded before copying the URL</li>
-                                    <li>• For longer videos, wait for the complete loading</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="border-l-4 border-red-500 pl-6">
-                            <h3 class="text-xl font-bold text-gray-800 mb-3">Step 2: Copy the Video URL</h3>
-                            <p class="text-gray-600 mb-4">
-                                Once you've found your desired video, tap the "Share" button and select "Copy Link" or manually copy the URL from your browser's address bar. The URL should look like: <code class="bg-gray-100 px-2 py-1 rounded text-sm">https://www.tiktok.com/@username/video/1234567890123456789</code>
-                            </p>
-
-                            <!-- Native Ad in Tutorial -->
-                            <div class="text-center my-6">
-                                <ins class="adsbygoogle"
-                                     style="display:block"
-                                     data-ad-client="ca-pub-5180588862932336"
-                                     data-ad-slot="3722187735"
-                                     data-ad-format="auto"
-                                     data-full-width-responsive="true"></ins>
-                                <script>
-                                     (adsbygoogle = window.adsbygoogle || []).push({});
-                                </script>
-                            </div>
-
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <h4 class="font-semibold text-gray-800 mb-2">Important Notes:</h4>
-                                <ul class="text-sm text-gray-600 space-y-1">
-                                    <li>• Make sure you copy the complete URL</li>
-                                    <li>• Avoid shortened URLs when possible</li>
-                                    <li>• The URL should contain the video ID at the end</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="border-l-4 border-red-500 pl-6">
-                            <h3 class="text-xl font-bold text-gray-800 mb-3">Step 3: Paste and Download</h3>
-                            <p class="text-gray-600 mb-4">
-                                Return to UltraVid and paste the copied URL into the input field above. Click the "Download" button and wait for our system to process your request. UltraVid will automatically detect the best available quality.
-                            </p>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <h4 class="font-semibold text-gray-800 mb-2">What Happens Next:</h4>
-                                <ul class="text-sm text-gray-600 space-y-1">
-                                    <li>• UltraVid analyzes the video source</li>
-                                    <li>• Automatically selects the highest quality available</li>
-                                    <li>• Removes any watermarks or overlays</li>
-                                    <li>• Prepares the file for download</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="border-l-4 border-red-500 pl-6">
-                            <h3 class="text-xl font-bold text-gray-800 mb-3">Step 4: Save Your Video</h3>
-                            <p class="text-gray-600 mb-4">
-                                Once processing is complete, your video will automatically download to your device's default download folder. The file will be saved in MP4 format with the original video's title or a generated filename.
-                            </p>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <h4 class="font-semibold text-gray-800 mb-2">File Information:</h4>
-                                <ul class="text-sm text-gray-600 space-y-1">
-                                    <li>• Format: MP4 (compatible with all devices)</li>
-                                    <li>• Quality: Original source quality (up to 4K)</li>
-                                    <li>• Audio: Preserved in original quality</li>
-                                    <li>• Size: Optimized for storage efficiency</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Video Quality Information -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-12">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Understanding Video Quality</h2>
-                <div class="max-w-4xl mx-auto">
-                    <p class="text-lg text-gray-600 mb-8 leading-relaxed">
-                        Video quality can significantly impact your viewing experience. UltraVid ensures you get the best possible quality for every download. Here's what you need to know about video resolutions and quality settings.
-                    </p>
-
-                    <!-- Multiplex Ad Unit -->
-                    <div class="text-center my-8">
-                        <ins class="adsbygoogle"
-                             style="display:block"
-                             data-ad-format="autorelaxed"
-                             data-matched-content-ui-type="image_stacked"
-                             data-matched-content-rows-num="4,2"
-                             data-matched-content-columns-num="1,2"
-                             data-ad-client="ca-pub-5180588862932336"
-                             data-ad-slot="8595240465"></ins>
-                        <script>
-                             (adsbygoogle = window.adsbygoogle || []).push({});
-                        </script>
-                    </div>
-                    
-                    <div class="grid md:grid-cols-2 gap-8 mb-8">
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-4">Resolution Guide</h3>
-                            <div class="space-y-4">
-                                <div class="border rounded-lg p-4">
-                                    <h4 class="font-semibold text-gray-800 mb-2">4K Ultra HD (3840x2160)</h4>
-                                    <p class="text-sm text-gray-600 mb-2">Highest quality available, perfect for large screens and professional use.</p>
-                                    <div class="flex items-center text-xs text-gray-500">
-                                        <i class="fas fa-star text-yellow-400 mr-1"></i>
-                                        <span>Premium quality</span>
-                                    </div>
-                                </div>
-                                <div class="border rounded-lg p-4">
-                                    <h4 class="font-semibold text-gray-800 mb-2">Full HD (1920x1080)</h4>
-                                    <p class="text-sm text-gray-600 mb-2">Standard high definition, excellent for most viewing scenarios.</p>
-                                    <div class="flex items-center text-xs text-gray-500">
-                                        <i class="fas fa-star text-yellow-400 mr-1"></i>
-                                        <span>High quality</span>
-                                    </div>
-                                </div>
-                                <div class="border rounded-lg p-4">
-                                    <h4 class="font-semibold text-gray-800 mb-2">HD (1280x720)</h4>
-                                    <p class="text-sm text-gray-600 mb-2">Good quality for mobile devices and standard viewing.</p>
-                                    <div class="flex items-center text-xs text-gray-500">
-                                        <i class="fas fa-star text-yellow-400 mr-1"></i>
-                                        <span>Standard quality</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-4">Quality Factors</h3>
-                            <div class="space-y-4">
-                                <div class="bg-blue-50 p-4 rounded-lg">
-                                    <h4 class="font-semibold text-gray-800 mb-2">Source Quality</h4>
-                                    <p class="text-sm text-gray-600">UltraVid can only download videos in the quality they were originally uploaded. We always select the highest available quality.</p>
-                                </div>
-                                <div class="bg-green-50 p-4 rounded-lg">
-                                    <h4 class="font-semibold text-gray-800 mb-2">File Size</h4>
-                                    <p class="text-sm text-gray-600">Higher quality videos result in larger file sizes. Consider your storage space when downloading multiple videos.</p>
-                                </div>
-                                <div class="bg-yellow-50 p-4 rounded-lg">
-                                    <h4 class="font-semibold text-gray-800 mb-2">Download Speed</h4>
-                                    <p class="text-sm text-gray-600">Larger files take longer to download. Ensure you have a stable internet connection for high-quality downloads.</p>
-                                </div>
-                                <div class="bg-purple-50 p-4 rounded-lg">
-                                    <h4 class="font-semibold text-gray-800 mb-2">Device Compatibility</h4>
-                                    <p class="text-sm text-gray-600">Most modern devices support HD and Full HD playback. 4K requires compatible hardware and software.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Another In-Content Ad -->
-                    <div class="text-center my-8">
-                        <ins class="adsbygoogle"
-                             style="display:block; text-align:center;"
-                             data-ad-layout="in-article"
-                             data-ad-format="fluid"
-                             data-ad-client="ca-pub-5180588862932336"
-                             data-ad-slot="9960293027"></ins>
-                        <script>
-                             (adsbygoogle = window.adsbygoogle || []).push({});
-                        </script>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quality Info Ad Break -->
-            <div class="text-center my-12">
-                <ins class="adsbygoogle"
-                     style="display:block"
-                     data-ad-client="ca-pub-5180588862932336"
-                     data-ad-slot="8975063152"
-                     data-ad-format="auto"
-                     data-full-width-responsive="true"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-            </div>
-
-            <!-- Troubleshooting Section -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-12">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Troubleshooting Common Issues</h2>
-                <div class="max-w-4xl mx-auto">
-                    <p class="text-lg text-gray-600 mb-8 leading-relaxed">
-                        While UltraVid is designed to work seamlessly, you might occasionally encounter issues. Here are solutions to the most common problems our users face.
-                    </p>
-                    
-                    <div class="space-y-6">
-                        <div class="border rounded-lg p-6">
-                            <h3 class="text-xl font-bold text-gray-800 mb-3">Download Failed or Error Message</h3>
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <div>
-                                    <h4 class="font-semibold text-gray-800 mb-2">Possible Causes:</h4>
-                                    <ul class="text-sm text-gray-600 space-y-1">
-                                        <li>• Video is private or restricted</li>
-                                        <li>• Invalid or corrupted URL</li>
-                                        <li>• TikTok server issues</li>
-                                        <li>• Network connectivity problems</li>
-                                        <li>• Video has been deleted</li>
-                                    </ul>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800 mb-2">Solutions:</h4>
-                                    <ul class="text-sm text-gray-600 space-y-1">
-                                        <li>• Verify the video is publicly accessible</li>
-                                        <li>• Copy the URL again from TikTok</li>
-                                        <li>• Check your internet connection</li>
-                                        <li>• Try again in a few minutes</li>
-                                        <li>• Use our issue reporting feature</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="border rounded-lg p-6">
-                            <h3 class="text-xl font-bold text-gray-800 mb-3">Poor Video Quality</h3>
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <div>
-                                    <h4 class="font-semibold text-gray-800 mb-2">Common Reasons:</h4>
-                                    <ul class="text-sm text-gray-600 space-y-1">
-                                        <li>• Original video was low quality</li>
-                                        <li>• TikTok compression limitations</li>
-                                        <li>• Network throttling during upload</li>
-                                        <li>• Device playback limitations</li>
-                                    </ul>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800 mb-2">What UltraVid Does:</h4>
-                                    <ul class="text-sm text-gray-600 space-y-1">
-                                        <li>• Always selects highest available quality</li>
-                                        <li>• Preserves original video properties</li>
-                                        <li>• No additional compression applied</li>
-                                        <li>• Maintains audio quality</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="border rounded-lg p-6">
-                            <h3 class="text-xl font-bold text-gray-800 mb-3">Slow Download Speed</h3>
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <div>
-                                    <h4 class="font-semibold text-gray-800 mb-2">Factors Affecting Speed:</h4>
-                                    <ul class="text-sm text-gray-600 space-y-1">
-                                        <li>• Your internet connection speed</li>
-                                        <li>• Video file size and quality</li>
-                                        <li>• Server load and location</li>
-                                        <li>• Device processing power</li>
-                                    </ul>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800 mb-2">Optimization Tips:</h4>
-                                    <ul class="text-sm text-gray-600 space-y-1">
-                                        <li>• Use a stable internet connection</li>
-                                        <li>• Close unnecessary browser tabs</li>
-                                        <li>• Avoid downloading during peak hours</li>
-                                        <li>• Consider lower quality for faster downloads</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Troubleshooting Ad Break -->
-            <div class="text-center my-12">
-                <ins class="adsbygoogle"
-                     style="display:block"
-                     data-ad-client="ca-pub-5180588862932336"
-                     data-ad-slot="6199327201"
-                     data-ad-format="auto"
-                     data-full-width-responsive="true"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-            </div>
-
-        </div>
-
-        <!-- Ad Space 1 -->
-        <div class="text-center my-12">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-5180588862932336"
-                 data-ad-slot="5880476042"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
-
-        <!-- How It Works Section -->
-                <div class="mt-16 mb-12">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">How UltraVid Works</h2>
-                    <div class="grid md:grid-cols-4 gap-8">
-                        <div class="text-center">
-                            <div class="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                                <span class="text-red-600 font-bold text-xl">1</span>
-                            </div>
-                            <h3 class="font-bold text-gray-800 mb-2">Copy URL</h3>
-                            <p class="text-gray-600 text-sm">Copy the video URL from TikTok</p>
-                        </div>
-                        <div class="text-center">
-                            <div class="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                                <span class="text-red-600 font-bold text-xl">2</span>
-                            </div>
-                            <h3 class="font-bold text-gray-800 mb-2">Paste & Process</h3>
-                            <p class="text-gray-600 text-sm">Paste the URL in our tool and click download</p>
-                        </div>
-                        <div class="text-center">
-                            <div class="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                                <span class="text-red-600 font-bold text-xl">3</span>
-                            </div>
-                            <h3 class="font-bold text-gray-800 mb-2">Auto-Processing</h3>
-                            <p class="text-gray-600 text-sm">UltraVid automatically selects the highest quality available</p>
-                        </div>
-                        <div class="text-center">
-                            <div class="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                                <span class="text-red-600 font-bold text-xl">4</span>
-                            </div>
-                            <h3 class="font-bold text-gray-800 mb-2">Download</h3>
-                            <p class="text-gray-600 text-sm">Get your video instantly in the best quality possible</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Ad Space 2 -->
-                <div class="text-center my-12">
-                    <ins class="adsbygoogle"
-                         style="display:block"
-                         data-ad-client="ca-pub-5180588862932336"
-                         data-ad-slot="1555277714"
-                         data-ad-format="auto"
-                         data-full-width-responsive="true"></ins>
-                    <script>
-                         (adsbygoogle = window.adsbygoogle || []).push({});
-                    </script>
-                </div>
-
-                <!-- Features & Benefits Section -->
-                <div class="mt-16 mb-12 bg-white rounded-lg shadow-lg p-8">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Why Choose UltraVid?</h2>
-                    <div class="max-w-4xl mx-auto">
-                        <div class="grid md:grid-cols-2 gap-8">
-                            <div class="text-center md:text-left">
-                                <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">Advanced Video Processing</h3>
-                                <ul class="space-y-2 text-gray-600">
-                                    <li class="flex items-center justify-center md:justify-start"><i class="fas fa-check text-green-500 mr-2"></i>Support for 4K and HD video downloads</li>
-                                    <li class="flex items-center justify-center md:justify-start"><i class="fas fa-check text-green-500 mr-2"></i>Automatic highest quality selection</li>
-                                    <li class="flex items-center justify-center md:justify-start"><i class="fas fa-check text-green-500 mr-2"></i>Audio extraction capabilities</li>
-                                    <li class="flex items-center justify-center md:justify-start"><i class="fas fa-check text-green-500 mr-2"></i>Batch download support</li>
-                                </ul>
-                            </div>
-                            <div class="text-center md:text-left">
-                                <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">User Experience</h3>
-                                <ul class="space-y-2 text-gray-600">
-                                    <li class="flex items-center justify-center md:justify-start"><i class="fas fa-check text-green-500 mr-2"></i>No registration required</li>
-                                    <li class="flex items-center justify-center md:justify-start"><i class="fas fa-check text-green-500 mr-2"></i>Free to use with no hidden fees</li>
-                                    <li class="flex items-center justify-center md:justify-start"><i class="fas fa-check text-green-500 mr-2"></i>Fast processing and download speeds</li>
-                                    <li class="flex items-center justify-center md:justify-start"><i class="fas fa-check text-green-500 mr-2"></i>Mobile-friendly interface</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Features Ad Break -->
-                <div class="text-center my-12">
-                    <ins class="adsbygoogle"
-                         style="display:block"
-                         data-ad-client="ca-pub-5180588862932336"
-                         data-ad-slot="5561032959"
-                         data-ad-format="auto"
-                         data-full-width-responsive="true"></ins>
-                    <script>
-                         (adsbygoogle = window.adsbygoogle || []).push({});
-                    </script>
-                </div>
-
-                <!-- FAQ Preview Section -->
-                <div class="mt-16 mb-12">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Frequently Asked Questions</h2>
-                    <div class="bg-white rounded-lg shadow-lg p-8 space-y-6">
-                        <div class="border-b pb-4">
-                            <h3 class="text-lg font-bold text-gray-800 mb-2">Is UltraVid free to use?</h3>
-                            <p class="text-gray-600">Yes, UltraVid is completely free to use. You can download videos without any registration or subscription fees.</p>
-                        </div>
-                        <div class="border-b pb-4">
-                            <h3 class="text-lg font-bold text-gray-800 mb-2">What video quality will I get?</h3>
-                            <p class="text-gray-600">UltraVid automatically downloads videos in the highest quality available from the source, including HD (720p), Full HD (1080p), and 4K resolution when the original video supports it.</p>
-                        </div>
-                        <div class="border-b pb-4">
-                            <h3 class="text-lg font-bold text-gray-800 mb-2">Is it safe to use UltraVid?</h3>
-                            <p class="text-gray-600">Absolutely! We prioritize user privacy and security. We don't store your personal data or the videos you download.</p>
-                        </div>
-                        <div class="text-center">
-                            <a href="/faq" class="inline-block px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                                View All FAQs
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Ad Space 3 -->
-                <div class="text-center my-12">
-                    <ins class="adsbygoogle"
-                         style="display:block"
-                         data-ad-client="ca-pub-5180588862932336"
-                         data-ad-slot="7634212686"
-                         data-ad-format="auto"
-                         data-full-width-responsive="true"></ins>
-                    <script>
-                         (adsbygoogle = window.adsbygoogle || []).push({});
-                    </script>
-                </div>
-
-                <!-- Supported Platform -->
-                <div class="mb-12">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center">Supported Platform</h2>
-                    <div class="max-w-md mx-auto">
-                        <div class="bg-white rounded-lg shadow-lg p-6 card-hover text-center">
-                            <div class="text-red-600 mb-4">
-                                <i class="fab fa-tiktok text-4xl"></i>
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-2">TikTok</h3>
-                            <p class="text-gray-600">Download TikTok videos without watermark in highest quality</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Platform Ad Break -->
-                <div class="text-center my-12">
-                    <ins class="adsbygoogle"
-                         style="display:block"
-                         data-ad-client="ca-pub-5180588862932336"
-                         data-ad-slot="9308706279"
-                         data-ad-format="auto"
-                         data-full-width-responsive="true"></ins>
-                    <script>
-                         (adsbygoogle = window.adsbygoogle || []).push({});
-                    </script>
-                </div>
-
-                <!-- Why Choose UltraVid Comparison -->
-                <div class="bg-white rounded-lg shadow-lg p-8 mb-12">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Why Choose UltraVid Over Other Downloaders?</h2>
-                    <div class="max-w-4xl mx-auto">
-                        <p class="text-lg text-gray-600 mb-8 leading-relaxed">
-                            With so many video downloaders available, it's important to choose one that prioritizes quality, security, and user experience. Here's how UltraVid stands out from the competition.
-                        </p>
-                        
-                        <div class="overflow-x-auto">
-                            <table class="w-full border-collapse border border-gray-300">
-                                <thead>
-                                    <tr class="bg-gray-50">
-                                        <th class="border border-gray-300 px-4 py-3 text-left font-semibold">Feature</th>
-                                        <th class="border border-gray-300 px-4 py-3 text-center font-semibold text-red-600">UltraVid</th>
-                                        <th class="border border-gray-300 px-4 py-3 text-center font-semibold text-gray-600">Other Downloaders</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="border border-gray-300 px-4 py-3 font-medium">Video Quality</td>
-                                        <td class="border border-gray-300 px-4 py-3 text-center text-green-600"><i class="fas fa-check"></i> Up to 4K</td>
-                                        <td class="border border-gray-300 px-4 py-3 text-center text-gray-500">Limited to 720p</td>
-                                    </tr>
-                                    <tr class="bg-gray-50">
-                                        <td class="border border-gray-300 px-4 py-3 font-medium">Watermark Removal</td>
-                                        <td class="border border-gray-300 px-4 py-3 text-center text-green-600"><i class="fas fa-check"></i> Automatic</td>
-                                        <td class="border border-gray-300 px-4 py-3 text-center text-gray-500">Manual process</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="border border-gray-300 px-4 py-3 font-medium">Privacy Protection</td>
-                                        <td class="border border-gray-300 px-4 py-3 text-center text-green-600"><i class="fas fa-check"></i> No data collection</td>
-                                        <td class="border border-gray-300 px-4 py-3 text-center text-gray-500">Tracks user data</td>
-                                    </tr>
-                                    <tr class="bg-gray-50">
-                                        <td class="border border-gray-300 px-4 py-3 font-medium">Download Speed</td>
-                                        <td class="border border-gray-300 px-4 py-3 text-center text-green-600"><i class="fas fa-check"></i> Lightning fast</td>
-                                        <td class="border border-gray-300 px-4 py-3 text-center text-gray-500">Slow processing</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="border border-gray-300 px-4 py-3 font-medium">User Interface</td>
-                                        <td class="border border-gray-300 px-4 py-3 text-center text-green-600"><i class="fas fa-check"></i> Modern & intuitive</td>
-                                        <td class="border border-gray-300 px-4 py-3 text-center text-gray-500">Outdated design</td>
-                                    </tr>
-                                    <tr class="bg-gray-50">
-                                        <td class="border border-gray-300 px-4 py-3 font-medium">Mobile Support</td>
-                                        <td class="border border-gray-300 px-4 py-3 text-center text-green-600"><i class="fas fa-check"></i> Fully responsive</td>
-                                        <td class="border border-gray-300 px-4 py-3 text-center text-gray-500">Desktop only</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="border border-gray-300 px-4 py-3 font-medium">Cost</td>
-                                        <td class="border border-gray-300 px-4 py-3 text-center text-green-600"><i class="fas fa-check"></i> Completely free</td>
-                                        <td class="border border-gray-300 px-4 py-3 text-center text-gray-500">Premium fees</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Comparison Ad Break -->
-                <div class="text-center my-12">
-                    <ins class="adsbygoogle"
-                         style="display:block"
-                         data-ad-client="ca-pub-5180588862932336"
-                         data-ad-slot="6672333446"
-                         data-ad-format="auto"
-                         data-full-width-responsive="true"></ins>
-                    <script>
-                         (adsbygoogle = window.adsbygoogle || []).push({});
-                    </script>
-                </div>
-
-                <!-- User Testimonials Section -->
-                <div class="bg-gradient-to-r from-red-50 to-pink-50 rounded-lg shadow-lg p-8 mb-12">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">What Our Users Say</h2>
-                    <div class="max-w-4xl mx-auto">
-                        <p class="text-lg text-gray-600 mb-8 text-center">
-                            Join thousands of satisfied users who trust UltraVid for their video downloading needs.
-                        </p>
-
-                        
-                        <div class="grid md:grid-cols-3 gap-8">
-                            <div class="bg-white rounded-lg p-6 shadow-md">
-                                <div class="flex items-center mb-4">
-                                    <div class="flex text-yellow-400">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                </div>
-                                <p class="text-gray-600 mb-4">"UltraVid is incredibly fast and the quality is amazing. I use it for downloading educational content and it works perfectly every time."</p>
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fas fa-user text-red-600"></i>
-                                    </div>
-                                    <div>
-                                        <div class="font-semibold text-gray-800">Sarah M.</div>
-                                        <div class="text-sm text-gray-500">Content Creator</div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="bg-white rounded-lg p-6 shadow-md">
-                                <div class="flex items-center mb-4">
-                                    <div class="flex text-yellow-400">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                </div>
-                                <p class="text-gray-600 mb-4">"The best TikTok downloader I've ever used. No watermarks, high quality, and completely free. Highly recommended!"</p>
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fas fa-user text-red-600"></i>
-                                    </div>
-                                    <div>
-                                        <div class="font-semibold text-gray-800">Mike R.</div>
-                                        <div class="text-sm text-gray-500">Student</div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="bg-white rounded-lg p-6 shadow-md">
-                                <div class="flex items-center mb-4">
-                                    <div class="flex text-yellow-400">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                </div>
-                                <p class="text-gray-600 mb-4">"Perfect for archiving my own TikTok content. The interface is clean and the download process is seamless."</p>
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fas fa-user text-red-600"></i>
-                                    </div>
-                                    <div>
-                                        <div class="font-semibold text-gray-800">Emma L.</div>
-                                        <div class="text-sm text-gray-500">Influencer</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Native Content Ad -->
-                        <div class="text-center mt-8">
-                            <ins class="adsbygoogle"
-                                 style="display:block"
-                                 data-ad-client="ca-pub-5180588862932336"
-                                 data-ad-slot="2260082192"
-                                 data-ad-format="auto"
-                                 data-full-width-responsive="true"></ins>
-                            <script>
-                                 (adsbygoogle = window.adsbygoogle || []).push({});
-                            </script>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Testimonials Ad Break -->
-                <div class="text-center my-12">
-                    <ins class="adsbygoogle"
-                         style="display:block"
-                         data-ad-client="ca-pub-5180588862932336"
-                         data-ad-slot="9256735388"
-                         data-ad-format="auto"
-                         data-full-width-responsive="true"></ins>
-                    <script>
-                         (adsbygoogle = window.adsbygoogle || []).push({});
-                    </script>
-                </div>
-
-                <!-- Latest Updates and News -->
-                <div class="bg-white rounded-lg shadow-lg p-8 mb-12">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Latest Updates and News</h2>
-                    <div class="max-w-4xl mx-auto">
-                        <p class="text-lg text-gray-600 mb-8 leading-relaxed">
-                            Stay informed about the latest improvements, new features, and important announcements from the UltraVid team.
-                        </p>
-                        
-                        <div class="space-y-6">
-                            <div class="border-l-4 border-red-500 pl-6">
-                                <div class="flex items-center mb-2">
-                                    <span class="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded mr-3">Latest</span>
-                                    <span class="text-sm text-gray-500">January 2025</span>
-                                </div>
-                                <h3 class="text-xl font-bold text-gray-800 mb-2">Enhanced 4K Video Support</h3>
-                                <p class="text-gray-600 mb-3">
-                                    We've upgraded our video processing engine to support 4K Ultra HD downloads for compatible TikTok videos. This ensures you get the highest possible quality for your downloads.
-                                </p>
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fas fa-video mr-2"></i>
-                                    <span>Quality improvements</span>
-                                </div>
-                            </div>
-                            
-                            <div class="border-l-4 border-blue-500 pl-6">
-                                <div class="flex items-center mb-2">
-                                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded mr-3">Security</span>
-                                    <span class="text-sm text-gray-500">December 2024</span>
-                                </div>
-                                <h3 class="text-xl font-bold text-gray-800 mb-2">Enhanced Privacy Protection</h3>
-                                <p class="text-gray-600 mb-3">
-                                    Implemented additional security measures including advanced SSL encryption and improved data protection protocols to ensure your privacy is always protected.
-                                </p>
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fas fa-shield-alt mr-2"></i>
-                                    <span>Security updates</span>
-                                </div>
-                            </div>
-                            
-                            <div class="border-l-4 border-green-500 pl-6">
-                                <div class="flex items-center mb-2">
-                                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded mr-3">Performance</span>
-                                    <span class="text-sm text-gray-500">November 2024</span>
-                                </div>
-                                <h3 class="text-xl font-bold text-gray-800 mb-2">Faster Processing Speeds</h3>
-                                <p class="text-gray-600 mb-3">
-                                    Optimized our server infrastructure to provide even faster video processing and download speeds, reducing average wait times by 40%.
-                                </p>
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <i class="fas fa-tachometer-alt mr-2"></i>
-                                    <span>Performance boost</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="text-center mt-8">
-                            <a href="/about" class="inline-block px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                                Learn More About UltraVid
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </main>
 
-    <!-- Pre-Footer Ad - Catch Users Before They Leave -->
-    <div class="text-center my-12">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-5180588862932336"
-             data-ad-slot="7320837187"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>
-             (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-    </div>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white mt-12 w-full">
-        <div class="w-full px-4 py-12">
-            <div class="max-w-6xl mx-auto">
-                <div class="grid md:grid-cols-4 gap-8">
-                    <div>
-                        <h3 class="text-xl font-bold mb-4 flex items-center">
-                            <i class="fas fa-film mr-2"></i>UltraVid
-                        </h3>
-                        <p class="text-gray-400 text-sm">The ultimate TikTok video downloader. Fast, free, and secure.</p>
-                    </div>
-                    <div>
-                        <h4 class="font-bold mb-4">Quick Links</h4>
-                        <ul class="space-y-2 text-sm">
-                            <li><a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
-                            <li><a href="/about" class="text-gray-400 hover:text-white transition-colors">About Us</a></li>
-                            <li><a href="/how-to-use" class="text-gray-400 hover:text-white transition-colors">How to Use</a></li>
-                            <li><a href="/supported-platforms" class="text-gray-400 hover:text-white transition-colors">TikTok Support</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="font-bold mb-4">Support</h4>
-                        <ul class="space-y-2 text-sm">
-                            <li><a href="/faq" class="text-gray-400 hover:text-white transition-colors">FAQ</a></li>
-                            <li><a href="/video-quality-guide" class="text-gray-400 hover:text-white transition-colors">Video Quality Guide</a></li>
-                            <li><button onclick="openModal()" class="text-gray-400 hover:text-white transition-colors text-left">Report Issue</button></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="font-bold mb-4">Legal</h4>
-                        <ul class="space-y-2 text-sm">
-                            <li><a href="/privacy-policy" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
-                            <li><a href="/terms-of-service" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="border-t border-gray-700 mt-8 pt-8 text-center">
-                    <p class="text-gray-400">© 2025 UltraVid. All rights reserved.</p>
-                    <p class="text-gray-500 text-sm mt-2">For educational purposes only. Please respect copyright laws and platform terms of service.</p>
-                </div>
+    <!-- Minimal Footer with Legal Links -->
+    <footer class="mt-16 w-full footer-min">
+        <div class="w-full px-4 py-8">
+            <div class="max-w-6xl mx-auto text-center">
+                <p>© 2025 UltraVid</p>
+                <p class="text-xs mt-1">For educational purposes only</p>
+                <p class="text-xs mt-2">
+                    <a href="/terms-of-service" class="underline hover:opacity-80">Terms</a>
+                    <span class="mx-2">·</span>
+                    <a href="/privacy-policy" class="underline hover:opacity-80">Privacy</a>
+                </p>
             </div>
         </div>
     </footer>
 
-    <!-- Sticky Sidebar Ad for Desktop -->
-    <div class="sticky-sidebar-ad">
-        <ins class="adsbygoogle"
-             style="display:block; width:300px; height:600px;"
-             data-ad-client="ca-pub-5180588862932336"
-             data-ad-slot="8591371036"
-             data-ad-format="auto"
-             data-full-width-responsive="false"></ins>
-        <script>
-             (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-    </div>
-
-    <!-- Mobile Floating Ad -->
-    <div class="mobile-floating-ad">
-        <ins class="adsbygoogle"
-             style="display:block; width:320px; height:100px;"
-             data-ad-client="ca-pub-5180588862932336"
-             data-ad-slot="8212097086"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>
-             (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-    </div>
-
-    <!-- Bottom Anchor Ad -->
-    <div id="bottom-anchor-ad" style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; background: white; display: none; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-5180588862932336"
-             data-ad-slot="2959770409"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>
-             (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-    </div>
-
     <script>
         document.getElementById('downloadForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
             const url = document.getElementById('url').value;
-            const loading = document.getElementById('loading');
-            
+            const log = document.getElementById('termLog');
             try {
-                loading.style.display = 'block';
-                
-                const response = await fetch('/download', {
-                    method: 'POST',
-                    body: new FormData(this)
-                });
-                
+                log.textContent = '$ parsing url...\n';
+                const response = await fetch('/download', { method: 'POST', body: new FormData(this) });
                 if (!response.ok) {
                     const contentType = response.headers.get('Content-Type') || '';
                     let message = 'Download failed';
@@ -1187,18 +77,14 @@
                             message = error.error || message;
                         } else {
                             const text = await response.text();
-                            // If server returned an HTML error page or very long text, use a generic message
                             if (text && !text.trim().startsWith('<') && text.length < 500) {
                                 message = text;
                             }
                         }
-                    } catch (_) {
-                        // Fall through to generic message
-                    }
+                    } catch (_) {}
                     throw new Error(message);
                 }
-                
-                // Get the filename from the Content-Disposition header
+                log.textContent += '$ downloading...\n';
                 const contentDisposition = response.headers.get('Content-Disposition');
                 let filename = 'video.mp4';
                 if (contentDisposition) {
@@ -1207,11 +93,8 @@
                         filename = matches[1].replace(/['"]/g, '');
                     }
                 }
-                
-                // Create a blob from the response
                 const blob = await response.blob();
-                
-                // Create a download link
+                log.textContent += '$ saving file...\n';
                 const downloadUrl = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = downloadUrl;
@@ -1220,89 +103,122 @@
                 a.click();
                 window.URL.revokeObjectURL(downloadUrl);
                 document.body.removeChild(a);
-                
+                log.textContent += '$ complete: ' + filename + '\n';
             } catch (error) {
-                alert(error.message);
-            } finally {
-                loading.style.display = 'none';
+                log.textContent += 'error: ' + (error.message || error.toString()) + '\n';
             }
         });
+        // interactive gloss
+        (function(){
+            const g = document.getElementById('heroGlass');
+            if(!g) return;
+            g.addEventListener('mousemove', (e)=>{
+                const rect = g.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                g.style.setProperty('--gx', x + '%');
+                g.style.setProperty('--gy', y + '%');
+            });
+        })();
 
-        // Modal functions
-        function openModal() {
-            document.getElementById('issueModal').style.display = 'block';
-            // Reset form and message when opening modal
-            document.getElementById('issueForm').reset();
-            const messageDiv = document.getElementById('issueMessage');
-            messageDiv.classList.add('hidden');
-            messageDiv.textContent = '';
-        }
-
-        function closeModal() {
-            document.getElementById('issueModal').style.display = 'none';
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('issueModal');
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
-
-        // Issue form submission
-        document.getElementById('issueForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = {
-                type: document.getElementById('issueType').value,
-                url: document.getElementById('issueUrl').value,
-                description: document.getElementById('issueDescription').value
-            };
-            
-            const messageDiv = document.getElementById('issueMessage');
-            messageDiv.classList.remove('hidden');
-            
+        // Background video loader with graceful fallback
+        (async function(){
+            const vid = document.getElementById('bgVideo');
+            const cssBg = document.getElementById('cssBg');
+            const cssReels = document.getElementById('cssReels');
+            const car = document.getElementById('carouselLayer');
+            const track = document.getElementById('carouselTrack');
             try {
-                const response = await fetch('/report-issue', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                const data = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(data.error || 'Failed to submit issue');
+                // If a bg URL is provided (?bg=https://...mp4), use it
+                const params = new URLSearchParams(location.search);
+                const remote = params.get('bg');
+                if (remote && /^https?:\/\//i.test(remote)) {
+                    vid.src = remote;
+                    vid.style.display = 'block';
+                    if (cssBg) cssBg.style.display = 'none';
+                    if (cssReels) cssReels.style.display = 'none';
+                    return;
                 }
-                
-                // Show success message
-                messageDiv.className = 'mb-4 p-4 rounded-lg bg-green-100 text-green-700';
-                messageDiv.textContent = 'Thank you for your report! We will look into this issue.';
-                
-                // Reset form
-                this.reset();
-                
-                // Close modal after 2 seconds
-                setTimeout(closeModal, 2000);
-                
-            } catch (error) {
-                // Show error message
-                messageDiv.className = 'mb-4 p-4 rounded-lg bg-red-100 text-red-700';
-                messageDiv.textContent = error.message || 'Failed to submit issue. Please try again later.';
+                // Carousel param (?carousel=v1.mp4,v2.mp4,...)
+                const carousel = params.get('carousel');
+                if (carousel && track) {
+                    const files = carousel.split(',').map(s => s.trim()).filter(Boolean);
+                    if (files.length > 0) {
+                        const build = (arr)=>{
+                            arr.forEach(src=>{
+                                const d = document.createElement('div');
+                                d.className = 'carousel-item';
+                                const v = document.createElement('video');
+                                v.src = src;
+                                v.autoplay = true; v.loop = true; v.muted = true; v.playsInline = true;
+                                d.appendChild(v); track.appendChild(d);
+                            });
+                        };
+                        // duplicate for seamless scroll
+                        build(files); build(files);
+                        car.style.display = 'block';
+                        if (cssBg) cssBg.style.display = 'none';
+                        if (cssReels) cssReels.style.display = 'none';
+                        return;
+                    }
+                }
+                // Auto-detect local media: prefer /static/media, then /static/css/media
+                const headOk = async (url) => {
+                    try { const r = await fetch(url, { method:'HEAD' }); return r.ok; } catch { return false; }
+                };
+                // Try single bg first
+                if (await headOk('/static/media/bg.mp4')) {
+                    vid.src = '/static/media/bg.mp4';
+                    vid.style.display = 'block';
+                    if (cssBg) cssBg.style.display = 'none';
+                    if (cssReels) cssReels.style.display = 'none';
+                    return;
+                }
+                // Try carousel using files found in media folders (including your uploaded ones)
+                const candidates = [
+                    'Since TikTok is shutting down enjoy this viral moment of mine one las.mp4',
+                    'Collab of the century kirk-madrigal Dance DanceTok TrendingDance.mp4',
+                    'Had to try this dance dothatthing trend viral fyp.mp4',
+                    'i love this trend.mp4',
+                    'Go follow my new account Moose funny duo dad nealmcdonough moo.mp4'
+                ];
+                const bases = ['/static/media/', '/static/css/media/'];
+                const detected = [];
+                for (const base of bases) {
+                    for (const f of candidates) {
+                        const url = base + encodeURIComponent(f);
+                        if (await headOk(url)) detected.push(url);
+                    }
+                }
+                if (detected.length >= 2 && track) {
+                    const build = (arr)=>{
+                        arr.forEach(src=>{
+                            const d = document.createElement('div');
+                            d.className = 'carousel-item';
+                            const v = document.createElement('video');
+                            v.src = src; v.autoplay = true; v.loop = true; v.muted = true; v.playsInline = true;
+                            d.appendChild(v); track.appendChild(d);
+                        });
+                    };
+                    build(detected); build(detected);
+                    car.style.display = 'block';
+                    if (cssBg) cssBg.style.display = 'none';
+                    if (cssReels) cssReels.style.display = 'none';
+                    return;
+                }
+                if (detected.length === 1) {
+                    vid.src = detected[0];
+                    vid.style.display = 'block';
+                    if (cssBg) cssBg.style.display = 'none';
+                    if (cssReels) cssReels.style.display = 'none';
+                    return;
+                }
+                // If nothing found, keep CSS layers
+            } catch (_) {
+                // leave CSS layers active
             }
-        });
-
-        // Show anchor ad after user scrolls
-        let scrolled = false;
-        window.addEventListener('scroll', function() {
-            if (!scrolled && window.scrollY > 1000) {
-                document.getElementById('bottom-anchor-ad').style.display = 'block';
-                scrolled = true;
-            }
-        });
+        })();
     </script>
 </body>
 </html> 
+

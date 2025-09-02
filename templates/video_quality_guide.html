@@ -3,430 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Quality Guide - UltraVid Downloader</title>
-    <meta name="description" content="Complete guide to video quality options in UltraVid. Learn about HD, Full HD, 4K, video formats, and how to choose the best quality for your needs.">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' style='stop-color:%23FF4B2B;stop-opacity:1' /><stop offset='100%25' style='stop-color:%23FF416C;stop-opacity:1' /></linearGradient></defs><rect width='64' height='64' rx='12' fill='url(%23grad)'/><path d='M20 18 h24 a4 4 0 0 1 4 4 v20 a4 4 0 0 1 -4 4 h-24 a4 4 0 0 1 -4 -4 v-20 a4 4 0 0 1 4 -4 z' fill='white' opacity='0.9'/><polygon points='28,26 28,38 38,32' fill='%23FF4B2B'/></svg>">
+    <title>Video Quality Guide - UltraVid</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5180588862932336" crossorigin="anonymous"></script>
-    <!-- Google Auto Ads -->
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({
-            google_ad_client: "ca-pub-5180588862932336",
-            enable_page_level_ads: true,
-            overlays: {bottom: true}
-        });
-    </script>
-    <style>
-        .gradient-bg { background: linear-gradient(135deg, #FF4B2B 0%, #FF416C 100%); }
-        .quality-card { transition: all 0.3s ease; }
-        .quality-card:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
-    </style>
+    <link href="/static/css/glass.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100">
-    <header class="gradient-bg text-white shadow-lg">
-        <div class="container mx-auto px-4 py-6">
+<body class="min-h-screen">
+    <div class="bg-layer"></div>
+    <div class="noise-layer"></div>
+    <header class="nav-glass text-white">
+        <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                    <i class="fas fa-film text-3xl"></i>
-                    <h1 class="text-3xl font-bold">UltraVid</h1>
+                    <i class="fas fa-film text-2xl"></i>
+                    <h1 class="text-2xl font-bold">UltraVid</h1>
                 </div>
                 <nav class="hidden md:flex items-center space-x-6">
-                    <a href="/" class="hover:text-gray-200 transition-colors">Home</a>
-                    <a href="/about" class="hover:text-gray-200 transition-colors">About</a>
-                    <a href="/faq" class="hover:text-gray-200 transition-colors">FAQ</a>
-                    <a href="/video-quality-guide" class="text-gray-200 font-semibold">Quality Guide</a>
+                    <a href="/" class="hover:text_gray-200">Home</a>
+                    <a href="/how-to-use" class="hover:text-gray-200">How to Use</a>
+                    <a href="/faq" class="hover:text-gray-200">FAQ</a>
                 </nav>
             </div>
         </div>
     </header>
 
-    <main class="container mx-auto px-4 py-8">
-        <div class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Video Quality Guide</h1>
-            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Everything you need to know about video quality, formats, and understanding different quality options</p>
-            
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6 max-w-2xl mx-auto">
-                <div class="flex items-center justify-center mb-2">
-                    <i class="fas fa-info-circle text-blue-600 mr-2"></i>
-                    <h3 class="font-semibold text-blue-800">How UltraVid Works</h3>
+    <main class="container mx-auto px-4 py-12">
+        <div class="container-narrow mx-auto glass stroke p-8 text-white">
+            <h2 class="text-3xl font-bold mb-6 text-center">Video Quality Guide</h2>
+            <div class="grid md:grid-cols-4 gap-4">
+                <div class="glass-light p-4 rounded-lg text-center">
+                    <div class="font-semibold">480p</div>
+                    <div class="muted text-sm">Standard Definition</div>
                 </div>
-                <p class="text-blue-700 text-sm">UltraVid automatically downloads videos in the highest quality available from the source. This guide helps you understand what quality you can expect based on the original video.</p>
-            </div>
-        </div>
-
-        <!-- Quality Overview -->
-        <div class="bg-white rounded-lg shadow-lg p-8 mb-12">
-            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Video Quality Options</h2>
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="quality-card bg-green-50 border border-green-200 rounded-lg p-6">
-                    <div class="text-center">
-                        <h3 class="text-2xl font-bold text-green-800 mb-2">480p</h3>
-                        <p class="text-green-600 font-semibold mb-3">Standard Definition</p>
-                        <div class="text-sm text-green-700 space-y-1">
-                            <p>854 × 480 pixels</p>
-                            <p>~2-5 MB per minute</p>
-                            <p>Good for mobile</p>
-                        </div>
-                    </div>
+                <div class="glass-light p-4 rounded-lg text-center">
+                    <div class="font-semibold">720p</div>
+                    <div class="muted text-sm">High Definition</div>
                 </div>
-                
-                <div class="quality-card bg-blue-50 border border-blue-200 rounded-lg p-6">
-                    <div class="text-center">
-                        <h3 class="text-2xl font-bold text-blue-800 mb-2">720p</h3>
-                        <p class="text-blue-600 font-semibold mb-3">High Definition</p>
-                        <div class="text-sm text-blue-700 space-y-1">
-                            <p>1280 × 720 pixels</p>
-                            <p>~5-10 MB per minute</p>
-                            <p>Great for most uses</p>
-                        </div>
-                    </div>
+                <div class="glass-light p-4 rounded-lg text-center">
+                    <div class="font-semibold">1080p</div>
+                    <div class="muted text-sm">Full HD</div>
                 </div>
-                
-                <div class="quality-card bg-purple-50 border border-purple-200 rounded-lg p-6">
-                    <div class="text-center">
-                        <h3 class="text-2xl font-bold text-purple-800 mb-2">1080p</h3>
-                        <p class="text-purple-600 font-semibold mb-3">Full HD</p>
-                        <div class="text-sm text-purple-700 space-y-1">
-                            <p>1920 × 1080 pixels</p>
-                            <p>~10-20 MB per minute</p>
-                            <p>Excellent quality</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="quality-card bg-red-50 border border-red-200 rounded-lg p-6">
-                    <div class="text-center">
-                        <h3 class="text-2xl font-bold text-red-800 mb-2">4K</h3>
-                        <p class="text-red-600 font-semibold mb-3">Ultra HD</p>
-                        <div class="text-sm text-red-700 space-y-1">
-                            <p>3840 × 2160 pixels</p>
-                            <p>~25-50 MB per minute</p>
-                            <p>Maximum quality</p>
-                        </div>
-                    </div>
+                <div class="glass-light p-4 rounded-lg text-center">
+                    <div class="font-semibold">4K</div>
+                    <div class="muted text-sm">Ultra HD</div>
                 </div>
             </div>
-        </div>
-
-        <!-- Ad Space -->
-        <div class="text-center mb-12">
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5180588862932336" data-ad-slot="7634212686" data-ad-format="auto" data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-
-        <!-- Detailed Quality Explanation -->
-        <div class="space-y-8">
-            <!-- 480p Section -->
-            <div class="bg-white rounded-lg shadow-lg p-8">
-                <div class="flex items-center mb-6">
-                    <div class="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mr-4">
-                        <span class="text-green-600 font-bold">480p</span>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-800">Standard Definition (480p)</h2>
-                </div>
-                
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Best For:</h3>
-                        <ul class="space-y-2 text-gray-600">
-                            <li class="flex items-center"><i class="fas fa-mobile-alt text-green-500 mr-2"></i>Mobile phone viewing</li>
-                            <li class="flex items-center"><i class="fas fa-wifi text-green-500 mr-2"></i>Slow internet connections</li>
-                            <li class="flex items-center"><i class="fas fa-save text-green-500 mr-2"></i>Limited storage space</li>
-                            <li class="flex items-center"><i class="fas fa-share text-green-500 mr-2"></i>Quick sharing</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Characteristics:</h3>
-                        <ul class="space-y-2 text-gray-600">
-                            <li>• Smallest file size</li>
-                            <li>• Fastest download speed</li>
-                            <li>• Uses less data</li>
-                            <li>• Adequate for small screens</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 720p Section -->
-            <div class="bg-white rounded-lg shadow-lg p-8">
-                <div class="flex items-center mb-6">
-                    <div class="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center mr-4">
-                        <span class="text-blue-600 font-bold">720p</span>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-800">High Definition (720p)</h2>
-                </div>
-                
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Best For:</h3>
-                        <ul class="space-y-2 text-gray-600">
-                            <li class="flex items-center"><i class="fas fa-laptop text-blue-500 mr-2"></i>Laptop and tablet viewing</li>
-                            <li class="flex items-center"><i class="fas fa-balance-scale text-blue-500 mr-2"></i>Quality vs size balance</li>
-                            <li class="flex items-center"><i class="fas fa-users text-blue-500 mr-2"></i>Social media sharing</li>
-                            <li class="flex items-center"><i class="fas fa-video text-blue-500 mr-2"></i>General video content</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Characteristics:</h3>
-                        <ul class="space-y-2 text-gray-600">
-                            <li>• Good quality-to-size ratio</li>
-                            <li>• Most popular choice</li>
-                            <li>• Clear and sharp</li>
-                            <li>• Widely compatible</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 1080p Section -->
-            <div class="bg-white rounded-lg shadow-lg p-8">
-                <div class="flex items-center mb-6">
-                    <div class="bg-purple-100 rounded-full w-12 h-12 flex items-center justify-center mr-4">
-                        <span class="text-purple-600 font-bold">1080p</span>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-800">Full HD (1080p)</h2>
-                </div>
-                
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Best For:</h3>
-                        <ul class="space-y-2 text-gray-600">
-                            <li class="flex items-center"><i class="fas fa-tv text-purple-500 mr-2"></i>TV and large screen viewing</li>
-                            <li class="flex items-center"><i class="fas fa-cut text-purple-500 mr-2"></i>Video editing projects</li>
-                            <li class="flex items-center"><i class="fas fa-eye text-purple-500 mr-2"></i>Detail-important content</li>
-                            <li class="flex items-center"><i class="fas fa-star text-purple-500 mr-2"></i>Premium quality needs</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Characteristics:</h3>
-                        <ul class="space-y-2 text-gray-600">
-                            <li>• Excellent visual quality</li>
-                            <li>• Industry standard</li>
-                            <li>• Crisp detail and clarity</li>
-                            <li>• Future-proof format</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 4K Section -->
-            <div class="bg-white rounded-lg shadow-lg p-8">
-                <div class="flex items-center mb-6">
-                    <div class="bg-red-100 rounded-full w-12 h-12 flex items-center justify-center mr-4">
-                        <span class="text-red-600 font-bold">4K</span>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-800">Ultra HD (4K)</h2>
-                </div>
-                
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Best For:</h3>
-                        <ul class="space-y-2 text-gray-600">
-                            <li class="flex items-center"><i class="fas fa-desktop text-red-500 mr-2"></i>4K monitors and TVs</li>
-                            <li class="flex items-center"><i class="fas fa-film text-red-500 mr-2"></i>Professional content</li>
-                            <li class="flex items-center"><i class="fas fa-archive text-red-500 mr-2"></i>Long-term archiving</li>
-                            <li class="flex items-center"><i class="fas fa-crown text-red-500 mr-2"></i>Maximum quality needs</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Characteristics:</h3>
-                        <ul class="space-y-2 text-gray-600">
-                            <li>• Highest available quality</li>
-                            <li>• Large file sizes</li>
-                            <li>• Requires powerful devices</li>
-                            <li>• Limited availability</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- File Formats Section -->
-        <div class="bg-white rounded-lg shadow-lg p-8 mt-12 mb-12">
-            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Supported File Formats</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="text-center p-6 bg-blue-50 rounded-lg">
-                    <i class="fas fa-file-video text-4xl text-blue-600 mb-4"></i>
-                    <h3 class="text-xl font-bold text-gray-800 mb-3">MP4</h3>
-                    <p class="text-gray-600 mb-4">Most popular and compatible video format</p>
-                    <ul class="text-sm text-gray-600 space-y-1">
-                        <li>• Universal compatibility</li>
-                        <li>• Good compression</li>
-                        <li>• High quality</li>
-                        <li>• Recommended choice</li>
-                    </ul>
-                </div>
-                
-                <div class="text-center p-6 bg-green-50 rounded-lg">
-                    <i class="fas fa-music text-4xl text-green-600 mb-4"></i>
-                    <h3 class="text-xl font-bold text-gray-800 mb-3">MP3</h3>
-                    <p class="text-gray-600 mb-4">Audio-only format for music and podcasts</p>
-                    <ul class="text-sm text-gray-600 space-y-1">
-                        <li>• Audio extraction</li>
-                        <li>• Small file size</li>
-                        <li>• Perfect for music</li>
-                        <li>• Wide support</li>
-                    </ul>
-                </div>
-                
-                <div class="text-center p-6 bg-purple-50 rounded-lg">
-                    <i class="fas fa-cog text-4xl text-purple-600 mb-4"></i>
-                    <h3 class="text-xl font-bold text-gray-800 mb-3">Other Formats</h3>
-                    <p class="text-gray-600 mb-4">Additional formats when available</p>
-                    <ul class="text-sm text-gray-600 space-y-1">
-                        <li>• AVI (when supported)</li>
-                        <li>• MOV (Apple devices)</li>
-                        <li>• MKV (high quality)</li>
-                        <li>• Platform dependent</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- Understanding Video Quality -->
-        <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg shadow-lg p-8 mb-12">
-            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Understanding Video Quality for Your Needs</h2>
-            <div class="grid md:grid-cols-2 gap-8">
-                <div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">Consider Your Device</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start">
-                            <i class="fas fa-mobile-alt text-blue-500 mr-3 mt-1"></i>
-                            <div>
-                                <h4 class="font-semibold">Mobile Phones</h4>
-                                <p class="text-sm text-gray-600">480p or 720p is usually sufficient</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-laptop text-purple-500 mr-3 mt-1"></i>
-                            <div>
-                                <h4 class="font-semibold">Laptops & Tablets</h4>
-                                <p class="text-sm text-gray-600">720p or 1080p for best experience</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-tv text-red-500 mr-3 mt-1"></i>
-                            <div>
-                                <h4 class="font-semibold">TVs & Large Displays</h4>
-                                <p class="text-sm text-gray-600">1080p or 4K for maximum quality</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">Consider Your Usage</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start">
-                            <i class="fas fa-share text-green-500 mr-3 mt-1"></i>
-                            <div>
-                                <h4 class="font-semibold">Quick Sharing</h4>
-                                <p class="text-sm text-gray-600">Lower quality for faster uploads</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-archive text-yellow-500 mr-3 mt-1"></i>
-                            <div>
-                                <h4 class="font-semibold">Archiving</h4>
-                                <p class="text-sm text-gray-600">Highest available quality</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-cut text-blue-500 mr-3 mt-1"></i>
-                            <div>
-                                <h4 class="font-semibold">Editing</h4>
-                                <p class="text-sm text-gray-600">1080p or higher recommended</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Technical Tips -->
-        <div class="bg-white rounded-lg shadow-lg p-8 mb-12">
-            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Technical Tips & Recommendations</h2>
-            <div class="grid md:grid-cols-2 gap-8">
-                <div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">Download Speed Tips</h3>
-                    <ul class="space-y-3 text-gray-600">
-                        <li class="flex items-start">
-                            <i class="fas fa-bolt text-yellow-500 mr-3 mt-1"></i>
-                            <div>
-                                <strong>Lower quality = Faster downloads</strong>
-                                <p class="text-sm">Choose 480p or 720p for quicker downloads</p>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-wifi text-blue-500 mr-3 mt-1"></i>
-                            <div>
-                                <strong>Check your internet speed</strong>
-                                <p class="text-sm">Ensure stable connection for large files</p>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-clock text-green-500 mr-3 mt-1"></i>
-                            <div>
-                                <strong>Peak hours matter</strong>
-                                <p class="text-sm">Download during off-peak times for better speeds</p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">Storage Considerations</h3>
-                    <ul class="space-y-3 text-gray-600">
-                        <li class="flex items-start">
-                            <i class="fas fa-hdd text-purple-500 mr-3 mt-1"></i>
-                            <div>
-                                <strong>File size varies greatly</strong>
-                                <p class="text-sm">4K videos can be 10x larger than 480p</p>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-mobile-alt text-red-500 mr-3 mt-1"></i>
-                            <div>
-                                <strong>Mobile storage limits</strong>
-                                <p class="text-sm">Consider device storage when choosing quality</p>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-cloud text-blue-500 mr-3 mt-1"></i>
-                            <div>
-                                <strong>Cloud storage costs</strong>
-                                <p class="text-sm">Higher quality means higher storage costs</p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- Call to Action -->
-        <div class="text-center">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Ready to Download in Perfect Quality?</h2>
-            <p class="text-gray-600 mb-6">Use this guide to choose the perfect quality for your video downloads</p>
-            <a href="/" class="bg-red-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-red-700 transition-colors mr-4">
-                Start Downloading
-            </a>
-            <a href="/faq" class="bg-gray-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-700 transition-colors">
-                View FAQ
-            </a>
+            <p class="text-xs mt-4 muted text-center">UltraVid delivers the best the source provides. Quality depends on the original upload.</p>
         </div>
     </main>
 
-    <footer class="bg-gray-800 text-white mt-12 w-full">
-        <div class="w-full px-4 py-12">
-            <div class="max-w-6xl mx-auto">
-                <div class="text-center">
-                    <p class="text-gray-400">© 2025 UltraVid. All rights reserved.</p>
-                    <p class="text-gray-500 text-sm mt-2">For educational purposes only. Please respect copyright laws.</p>
-                </div>
+    <footer class="mt-16 w-full footer-min">
+        <div class="w-full px-4 py-8">
+            <div class="max-w-6xl mx-auto text-center">
+                <p>© 2025 UltraVid</p>
+                <p class="text-xs mt-1">For educational purposes only</p>
             </div>
         </div>
     </footer>
 </body>
-</html> 
+</html>
+

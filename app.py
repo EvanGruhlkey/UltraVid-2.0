@@ -165,9 +165,7 @@ def supported_platforms():
 def video_quality_guide():
     return render_template('video_quality_guide.html')
 
-@app.route('/ads.txt')
-def ads_txt():
-    return send_file('ads.txt', mimetype='text/plain')
+
 
 def get_tiktok_options(url):
     """Get TikTok-specific yt-dlp options with improved headers and settings"""
