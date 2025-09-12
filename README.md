@@ -20,7 +20,8 @@ The cleanest way to download TikTok videos — watermark-free, up to 4K, fast an
 ### Prerequisites
 - [Python 3.x](https://www.python.org/)  
 - [Node.js](https://nodejs.org/) (for frontend assets)  
-- [pip](https://pip.pypa.io/)  
+- [pip](https://pip.pypa.io/)
+- [FFmpeg](https://ffmpeg.org/download.html)
 
 ### Clone the repo
 ```bash
